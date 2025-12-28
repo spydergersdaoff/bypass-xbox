@@ -7,184 +7,114 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Orbitron:wght@400;900&family=Inter:wght@400;900&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00ff9d; --blue-gradient: linear-gradient(135deg, #00ff9d 0%, #0078d4 100%); }
-        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
-        
+        :root { --neon: #00ff9d; }
+        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow: hidden; height: 100vh; }
         .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
-
-        /* Éclat vert en arrière-plan */
-        .bg-glow { position: fixed; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 255, 157, 0.05) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; }
-
-        .glass-card { background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 157, 0.15); box-shadow: 0 0 50px rgba(0, 0, 0, 0.9); position: relative; }
-        
-        /* Titre Vert Néon demandé */
-        .neon-access { color: var(--neon); text-shadow: 0 0 15px rgba(0, 255, 157, 0.5); font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 2px; }
-
-        .btn-premium { background: var(--blue-gradient); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-weight: 900; color: black; border: none; }
-        .btn-premium:hover { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 0 20px rgba(0, 255, 157, 0.3); }
-
-        .timer-badge { background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.2); padding: 8px 16px; border-radius: 12px; font-family: 'Fira Code', monospace; font-weight: bold; }
-
-        .admin-btn { position: absolute; top: 15px; left: 15px; color: #222; font-size: 10px; font-weight: bold; z-index: 110; cursor: pointer; }
-        .admin-btn:hover { color: var(--neon); }
-
-        #keyOverlay { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; align-items: center; justify-content: center; }
+        .glass-card { background: rgba(10, 10, 15, 0.98); backdrop-filter: blur(30px); border: 1px solid rgba(0, 255, 157, 0.2); box-shadow: 0 0 60px rgba(0, 0, 0, 1); }
+        .neon-access { color: var(--neon); text-shadow: 0 0 15px rgba(0, 255, 157, 0.6); font-family: 'Orbitron', sans-serif; font-weight: 900; }
+        .btn-premium { background: linear-gradient(135deg, #00ff9d 0%, #0078d4 100%); color: black; font-weight: 900; transition: 0.3s; }
+        .btn-premium:hover { transform: scale(1.02); filter: brightness(1.2); }
+        #keyOverlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
-
-        /* Style des inputs */
-        input { background: rgba(255, 255, 255, 0.03) !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; transition: 0.3s; }
-        input:focus { border-color: var(--neon) !important; outline: none; }
+        input { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; }
     </style>
 </head>
 <body>
 
     <div class="bg-grid"></div>
-    <div class="bg-glow"></div>
 
-    <div onclick="adminAccess()" class="admin-btn uppercase tracking-widest">All Keys</div>
+    <div onclick="adminAccess()" style="position:fixed; top:10px; left:10px; color:#111; font-size:9px; cursor:pointer; z-index:2000;">ALL KEYS</div>
 
     <div id="keyOverlay">
         <div class="glass-card max-w-sm w-full p-10 rounded-[40px] text-center">
             <h2 class="neon-access text-2xl mb-2">ACCÈS RESTREINT</h2>
-            <p class="text-gray-500 text-[10px] mb-8 font-bold uppercase tracking-widest">UNE CLÉ EST REQUISE (VALIDITÉ 24H)</p>
-            
-            <input type="text" id="keyInput" placeholder="KEY-XXXXXX" class="w-full p-4 rounded-2xl text-center text-white mb-6 font-mono uppercase">
-            
-            <button onclick="activateKey()" class="w-full py-4 btn-premium rounded-2xl text-[11px] uppercase tracking-widest shadow-lg">ACTIVER LA SESSION</button>
-            <p id="errorMessage" class="text-red-500 text-[10px] mt-4 hidden font-bold">CLÉ INVALIDE OU EXPIRÉE !</p>
-
-            <div class="mt-10 pt-6 border-t border-white/5">
-                <a href="#" class="text-green-500 text-[9px] font-bold uppercase tracking-widest hover:brightness-125">Boutique Officielle</a>
-            </div>
+            <p class="text-gray-500 text-[10px] mb-8 font-bold uppercase tracking-widest">LICENCE REQUISE (24H)</p>
+            <input type="text" id="keyInput" placeholder="ENTREZ VOTRE CLÉ" class="w-full p-4 rounded-2xl text-center mb-6 font-mono uppercase outline-none focus:border-green-500">
+            <button onclick="activateKey()" class="w-full py-4 btn-premium rounded-2xl text-[11px] uppercase tracking-widest">ACTIVER LA SESSION</button>
+            <p id="errorMsg" class="text-red-500 text-[10px] mt-4 hidden">CLÉ INVALIDE</p>
         </div>
     </div>
 
-    <div id="mainUI" class="hidden flex items-center justify-center min-h-screen p-6">
+    <div id="mainUI" class="hidden flex items-center justify-center min-h-screen">
         <div class="glass-card w-full max-w-lg rounded-[40px] p-10">
             <div class="flex justify-between items-center mb-10">
-                <div>
-                    <h1 class="text-2xl font-black italic uppercase tracking-tighter">BYPASS <span class="text-[#00ff9d]">PREMIUM</span></h1>
-                    <p class="text-[9px] text-gray-500 font-bold uppercase">VERSION 4.0.2 STABLE</p>
-                </div>
-                <div id="timerDisplay" class="timer-badge">24:00:00</div>
+                <h1 class="text-xl font-black italic">BYPASS <span class="text-[#00ff9d]">PREMIUM</span></h1>
+                <div id="timerDisplay" class="text-yellow-500 font-mono font-bold bg-yellow-500/10 px-4 py-2 rounded-xl border border-yellow-500/20">24:00:00</div>
             </div>
-
             <div class="space-y-4">
-                <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block p-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold text-gray-400 hover:text-green-400 text-center transition-all">
-                    1. INITIALISER L'IP (OBLIGATOIRE) <span class="ml-2 text-green-500 font-bold">GO →</span>
-                </a>
-
-                <button class="w-full py-4 bg-[#107c10] rounded-2xl text-[11px] font-black uppercase hover:bg-green-700 transition-all">CONNEXION MICROSOFT</button>
-
-                <input type="text" id="oauthUrl" placeholder="Collez le lien de redirection ici..." class="w-full p-4 rounded-2xl text-xs text-white">
-
-                <button id="startBypass" class="w-full py-4 btn-premium rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-lg">LANCER L'INJECTION</button>
-            </div>
-
-            <div class="mt-8 p-4 bg-black/60 border border-white/5 rounded-2xl h-28 font-mono text-[10px] text-[#00ff9d] overflow-y-auto">
-                <div class="opacity-50 mb-1">[SYSTEM] En attente d'initialisation...</div>
-                <div id="consoleLogs"></div>
+                <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block p-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold text-center text-gray-400">1. INITIALISER L'IP (GO →)</a>
+                <button class="w-full py-4 bg-[#107c10] rounded-2xl font-black text-[11px]">CONNEXION MICROSOFT</button>
+                <input type="text" placeholder="Lien de redirection..." class="w-full p-4 rounded-2xl text-xs outline-none">
+                <button class="w-full py-4 btn-premium rounded-2xl text-[11px] font-black uppercase">LANCER L'INJECTION</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION SÉCURISÉE DES CLÉS ---
-        const SALT = "FAB_VAULT_2025_FINAL"; // Ne change pas ça pour que les clés restent les mêmes
-        const MASTER_KEYS = [];
-        for(let i=0; i<100; i++) {
-            let hash = 0, str = SALT + i;
-            for (let j=0; j<str.length; j++) { hash = ((hash << 5) - hash) + str.charCodeAt(j); hash |= 0; }
-            let val = Math.abs(hash).toString(36).toUpperCase().substring(0,6);
-            MASTER_KEYS.push("KEY-" + val);
-        }
+        // Liste de clés générées de façon fixe (pour que ça marche à tous les coups)
+        const MASTER_KEYS = ["KEY-FAB123", "KEY-BYPASS99", "KEY-Z7R2X1", "KEY-L9P0Q4"]; 
+        // Ajout de 96 autres clés pour arriver à 100
+        for(let i=1; i<=96; i++) { MASTER_KEYS.push("KEY-PRO" + i.toString().padStart(3, '0')); }
 
-        // --- ACCÈS ADMIN ---
         function adminAccess() {
-            const code = prompt("ADMIN CODE :");
-            if (code === "Fabien62s") {
-                console.table(MASTER_KEYS);
-                alert("Les 100 clés sont affichées dans la console (F12).\nExemple de clé valide : " + MASTER_KEYS[0]);
+            if(prompt("Admin:") === "Fabien62s") {
+                alert("Clé test : " + MASTER_KEYS[0] + "\n\nLes 100 clés sont dans la console (F12)");
+                console.log("LISTE DES CLES :", MASTER_KEYS);
             }
         }
 
-        // --- LOGIQUE D'ACTIVATION ET SESSION ---
         function activateKey() {
-            const input = document.getElementById('keyInput').value.trim().toUpperCase();
-            
-            if (MASTER_KEYS.includes(input)) {
-                // Créer une expiration à +24h de maintenant
-                const expiry = new Date().getTime() + (24 * 60 * 60 * 1000);
-                localStorage.setItem('bypass_vault_session', expiry);
+            const val = document.getElementById('keyInput').value.trim().toUpperCase();
+            const error = document.getElementById('errorMsg');
+
+            if (MASTER_KEYS.includes(val)) {
+                // Sauvegarde de l'heure actuelle + 24h
+                const expireDate = new Date().getTime() + (24 * 60 * 60 * 1000);
+                localStorage.setItem('user_session_v5', expireDate);
                 
-                // Rafraîchir pour entrer dans la session
-                location.reload();
+                // Forcer l'affichage immédiat
+                checkAndRun();
             } else {
-                const err = document.getElementById('errorMessage');
-                err.classList.remove('hidden');
-                setTimeout(() => err.classList.add('hidden'), 3000);
+                error.classList.remove('hidden');
+                setTimeout(() => error.classList.add('hidden'), 2000);
             }
         }
 
-        // --- VÉRIFICATION AU DÉMARRAGE ---
-        window.onload = () => {
-            const savedExpiry = localStorage.getItem('bypass_vault_session');
-            
-            if (savedExpiry) {
+        function checkAndRun() {
+            const saved = localStorage.getItem('user_session_v5');
+            if (saved) {
                 const now = new Date().getTime();
-                
-                if (now < savedExpiry) {
-                    // SESSION ENCORE VALIDE
-                    document.getElementById('keyOverlay').classList.add('hidden');
+                if (now < saved) {
+                    // Masquer l'écran de clé et montrer le site
+                    document.getElementById('keyOverlay').style.display = 'none';
                     document.getElementById('mainUI').classList.remove('hidden');
-                    startCountdown(parseInt(savedExpiry));
+                    
+                    // Lancer le chrono
+                    startChrono(parseInt(saved));
                 } else {
-                    // SESSION EXPIRÉE
-                    localStorage.removeItem('bypass_vault_session');
+                    localStorage.removeItem('user_session_v5');
                 }
             }
-        };
+        }
 
-        function startCountdown(expiry) {
+        function startChrono(expiry) {
             const display = document.getElementById('timerDisplay');
-            
-            const timer = setInterval(() => {
-                const now = new Date().getTime();
-                const diff = expiry - now;
-
+            const loop = setInterval(() => {
+                const diff = expiry - new Date().getTime();
                 if (diff <= 0) {
-                    clearInterval(timer);
-                    localStorage.removeItem('bypass_vault_session');
+                    clearInterval(loop);
+                    localStorage.removeItem('user_session_v5');
                     location.reload();
-                    return;
                 }
-
-                const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
-                const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-
+                const h = Math.floor(diff/3600000).toString().padStart(2,'0');
+                const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+                const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
                 display.innerText = `${h}:${m}:${s}`;
             }, 1000);
         }
 
-        // --- MOTEUR DE BYPASS SIMPLIFIÉ ---
-        document.getElementById('startBypass').onclick = () => {
-            const logContainer = document.getElementById('consoleLogs');
-            const url = document.getElementById('oauthUrl').value;
-            
-            if (!url.includes('code=')) {
-                logContainer.innerHTML += `<div class="text-red-500">[!] ERREUR : LIEN DE REDIRECTION INVALIDE</div>`;
-                return;
-            }
-
-            logContainer.innerHTML += `<div>[+] INITIALISATION DU PAYLOAD...</div>`;
-            setTimeout(() => {
-                logContainer.innerHTML += `<div>[+] CONNEXION AUX SERVEURS EPIC...</div>`;
-            }, 1000);
-            setTimeout(() => {
-                logContainer.innerHTML += `<div class="text-yellow-500">[!] EN ATTENTE DE RÉPONSE DU PROXY...</div>`;
-            }, 2500);
-        };
+        // Vérification au chargement
+        window.onload = checkAndRun;
     </script>
 </body>
 </html>
