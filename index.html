@@ -2,70 +2,157 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Bypass Pro | Classic UI</title>
+    <title>Bypass Pro | Next-Gen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="badges.js"></script>
     <style>
-        body { background: #1a1a1a; color: #ffffff; font-family: 'Segoe UI', sans-serif; }
-        .card { background: #252525; border: 1px solid #333; border-radius: 10px; padding: 25px; }
-        .terminal { background: #000; border: 1px solid #444; color: #00ff00; font-family: monospace; padding: 15px; height: 350px; overflow-y: auto; font-size: 13px; }
-        .btn-blue { background: #0078d4; color: white; padding: 12px; border-radius: 5px; cursor: pointer; text-align: center; font-weight: bold; }
-        .btn-blue:hover { background: #005a9e; }
-        .input-box { background: #111; border: 1px solid #444; color: #00ff9d; padding: 12px; border-radius: 5px; width: 100%; outline: none; }
-        .badge-img { width: 32px; height: 32px; margin-left: 10px; cursor: pointer; display: inline-block; }
-        #adminPanel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 9999; }
-        .staff-btn { background: #333; padding: 10px; border: 1px solid #555; border-radius: 5px; cursor: pointer; text-align: center; font-size: 12px; }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
+
+        body { 
+            background-color: #08080a; 
+            color: #e2e2e2; 
+            font-family: 'JetBrains Mono', monospace;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #08080a 100%);
+            min-height: 100vh;
+        }
+
+        .neo-card {
+            background: rgba(15, 15, 20, 0.8);
+            border: 1px solid rgba(0, 255, 157, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .terminal-box {
+            background: #050505;
+            border-left: 3px solid #00ff9d;
+            height: 400px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #00ff9d;
+            text-shadow: 0 0 5px rgba(0, 255, 157, 0.3);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 120, 212, 0.4);
+        }
+
+        .glow-text {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(0, 120, 212, 0.8);
+        }
+
+        .badge-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .badge-img:hover {
+            border-color: #00ff9d;
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        #adminPanel {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4">
 
     <div id="adminPanel">
-        <div class="card w-96 text-center">
-            <h2 class="text-xl font-bold mb-4 text-blue-400">STAFF CONSOLE</h2>
-            <input type="text" id="idSearch" oninput="checkUserStatus()" placeholder="Coller l'ID ici..." class="input-box mb-4 text-center">
-            
-            <div id="staffButtonsContainer" class="grid grid-cols-2 gap-2 mb-4"></div>
-            
-            <p id="badgeStatusText" class="text-[10px] text-gray-500 mb-6 font-bold uppercase italic">En attente d'ID...</p>
-            <button class="w-full p-2 bg-red-600 rounded text-sm font-bold" onclick="document.getElementById('adminPanel').style.display='none'">FERMER</button>
+        <div class="neo-card p-8 w-full max-w-md border-t-4 border-t-blue-500">
+            <h2 class="glow-text text-xl mb-6 text-center text-blue-400">COMMAND CENTER</h2>
+            <input type="text" id="idSearch" oninput="checkUserStatus()" placeholder="TARGET USER ID..." class="w-full bg-black border border-white/10 p-4 rounded mb-4 outline-none focus:border-blue-500 text-blue-400">
+            <div id="staffButtonsContainer" class="grid grid-cols-2 gap-3 mb-6"></div>
+            <div id="badgeStatusText" class="text-center text-[10px] text-gray-500 uppercase mb-6 tracking-widest">Awaiting Identity...</div>
+            <button onclick="document.getElementById('adminPanel').style.display='none'" class="w-full py-3 bg-red-900/20 border border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white transition rounded">EXIT CONSOLE</button>
         </div>
     </div>
 
-    <div class="max-w-5xl mx-auto">
-        <div class="flex justify-between items-center mb-8 bg-[#252525] p-5 rounded-lg border border-[#333]">
-            <h1 class="text-2xl font-bold italic" ondblclick="beStaff()">BYPASS <span class="text-blue-500">PRO</span></h1>
-            <div class="flex items-center">
-                <div id="badgeGroupContainer"></div>
-                <button onclick="generateUserCode()" class="ml-6 text-[11px] border border-gray-500 px-4 py-2 rounded hover:bg-gray-800 transition uppercase font-bold">Générer ID System</button>
+    <div class="max-w-6xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 p-6 neo-card border-b-2 border-b-blue-500">
+            <div class="mb-4 md:mb-0">
+                <h1 class="text-3xl font-black glow-text italic" ondblclick="beStaff()">
+                    BYPASS <span class="text-blue-500">PRO</span> <span class="text-[10px] align-top text-gray-500">V3</span>
+                </h1>
             </div>
-        </div>
+            
+            <div class="flex items-center gap-4">
+                <div id="badgeGroupContainer" class="flex items-center gap-2"></div>
+                <div class="h-8 w-[1px] bg-white/10 mx-2"></div>
+                <button onclick="generateUserCode()" class="px-6 py-2 border border-white/20 rounded-full text-[11px] font-bold hover:bg-white hover:text-black transition uppercase">
+                    Get ID System
+                </button>
+            </div>
+        </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="card space-y-6">
-                <div>
-                    <label class="block text-[10px] text-gray-500 font-bold mb-2 uppercase">1. Proxy Setup</label>
-                    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="btn-blue block text-sm">Réveiller le Proxy</a>
-                </div>
-                
-                <div>
-                    <label class="block text-[10px] text-gray-500 font-bold mb-2 uppercase">2. Microsoft Auth</label>
-                    <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="btn-blue block text-sm bg-gray-600">Se connecter</a>
-                </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-6">
+                <div class="neo-card p-6">
+                    <h3 class="text-xs font-bold text-gray-500 mb-6 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span> INJECTION STEPS
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="btn-action block p-4 rounded text-center text-sm">
+                            1. Wake Up Proxy
+                        </a>
+                        
+                        <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="btn-action block p-4 rounded text-center text-sm !bg-zinc-800 hover:!bg-zinc-700">
+                            2. Xbox Auth
+                        </a>
 
-                <div>
-                    <label class="block text-[10px] text-gray-500 font-bold mb-2 uppercase">3. Redirect URL</label>
-                    <input type="text" id="oauthUrl" placeholder="Collez l'URL ici..." class="input-box">
-                </div>
+                        <div class="pt-2">
+                            <label class="text-[10px] text-gray-500 mb-2 block uppercase">Epic Redirect URL</label>
+                            <input type="text" id="oauthUrl" placeholder="https://accounts.epicgames.com/..." class="w-full bg-black/50 border border-white/10 p-4 rounded text-blue-400 text-xs focus:border-blue-500 outline-none transition">
+                        </div>
 
-                <button onclick="runBypass()" class="btn-blue bg-green-600 w-full py-4 text-lg mt-4">LANCER L'INJECTION</button>
+                        <button onclick="runBypass()" class="w-full py-5 bg-gradient-to-r from-green-600 to-emerald-600 rounded mt-4 font-black tracking-widest hover:scale-[1.02] transition active:scale-95 shadow-lg shadow-green-900/20">
+                            EXECUTE INJECTION
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex flex-col">
-                <label class="text-[10px] text-gray-500 font-bold mb-2 ml-1 uppercase">Terminal de sortie</label>
-                <div id="console" class="terminal">
-                    <div>> System Online. Prêt.</div>
+            <div class="lg:col-span-7">
+                <div class="neo-card overflow-hidden h-full">
+                    <div class="bg-white/5 px-6 py-3 border-b border-white/5 flex justify-between items-center">
+                        <span class="text-[10px] font-bold tracking-widest text-gray-400">LIVE SYSTEM LOGS</span>
+                        <div class="flex gap-1">
+                            <div class="w-2 h-2 rounded-full bg-red-500/50"></div>
+                            <div class="w-2 h-2 rounded-full bg-yellow-500/50"></div>
+                            <div class="w-2 h-2 rounded-full bg-green-500/50"></div>
+                        </div>
+                    </div>
+                    <div id="console" class="terminal-box p-6">
+                        <div class="opacity-50 text-white">> Initializing kernel...</div>
+                        <div class="opacity-50 text-white">> Connection established.</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -84,54 +171,68 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function lg(t) {
+        function lg(t, isError = false) {
             const c = document.getElementById('console');
-            c.innerHTML += `<div>> ${t}</div>`;
+            const div = document.createElement('div');
+            div.className = isError ? "text-red-500" : "mb-1";
+            div.innerHTML = `<span class="opacity-50">[${new Date().toLocaleTimeString()}]</span> > ${t}`;
+            c.appendChild(div);
             c.scrollTop = c.scrollHeight;
         }
 
-        // ID SANS REFRESH
         function generateUserCode() {
             let id = localStorage.getItem('user_id');
             if(!id) {
                 id = "BP-" + Math.floor(1000 + Math.random() * 9000);
                 localStorage.setItem('user_id', id);
             }
-            lg("VOTRE ID : " + id);
+            lg(`IDENTITY RECOGNIZED: <span class="text-white bg-blue-600 px-2 rounded">${id}</span>`);
             listenToMyBadges(id);
         }
 
-        // MOTEUR BYPASS
         async function runBypass() {
             const urlIn = document.getElementById('oauthUrl').value.trim();
-            if(!urlIn) return lg("Erreur: Lien manquant.");
-            lg("Injection lancée...");
+            if(!urlIn) return lg("CRITICAL ERROR: No URL provided.", true);
+            
+            lg("Starting payload injection...");
             const proxy = "https://cors-anywhere.herokuapp.com/";
             const SWITCH_TOKEN = "Basic OThmN2U0MmMyZTNhNGY4NmE3NGViNDNmYmI0MWVkMzk6MGEyNDQ5YTItMDAxYS00NTFlLWFmZWMtM2U4MTI5MDFjNGQ3";
+
             try {
-                const code = new URL(urlIn).searchParams.get('code');
+                const urlObj = new URL(urlIn);
+                const code = urlObj.searchParams.get('code');
+                
+                lg("Fetching authorization token...");
                 const r1 = await fetch(proxy + 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token', {
                     method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': SWITCH_TOKEN },
                     body: new URLSearchParams({ 'grant_type': 'external_auth', 'external_auth_type': 'xbl', 'external_auth_token': code })
                 });
                 const d1 = await r1.json();
+                
                 if(d1.access_token) {
-                    const r2 = await fetch(proxy + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', { headers: { 'Authorization': "Bearer " + d1.access_token } });
+                    lg(`Access Granted: ${d1.displayName}`);
+                    const r2 = await fetch(proxy + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', {
+                        headers: { 'Authorization': "Bearer " + d1.access_token }
+                    });
                     const d2 = await r2.json();
-                    lg("Succès ! Exchange: " + d2.code);
-                    lg("<a href='https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"' target='_blank' style='color:#00ff9d;text-decoration:underline;'>CLIQUE ICI</a>");
-                } else { lg("Erreur d'authentification."); }
-            } catch (e) { lg("Erreur Proxy ou URL."); }
+                    lg("Finalizing exchange code...");
+                    lg(`<a href="https://www.epicgames.com/id/exchange?exchangeCode=${d2.code}" target="_blank" class="text-white bg-green-600 px-3 py-1 rounded inline-block mt-2">CLICK TO FINISH LOGIN</a>`);
+                } else {
+                    lg("Auth Failed. Check proxy or code.", true);
+                }
+            } catch (e) {
+                lg("Network Error. Ensure proxy is active.", true);
+            }
         }
 
-        // GESTION STAFF DYNAMIQUE
+        // LOGIQUE STAFF
         function generateStaffPanel() {
             const container = document.getElementById('staffButtonsContainer');
             container.innerHTML = "";
             for (const [key, config] of Object.entries(badgesConfig)) {
                 if(key === "isStaff") continue;
                 const div = document.createElement('div');
-                div.className = "staff-btn";
+                div.className = "p-3 bg-white/5 border border-white/10 rounded cursor-pointer hover:border-blue-500 hover:bg-blue-500/10 text-[11px] text-center transition";
                 div.onclick = () => toggleBadgeFirebase(key);
                 div.innerText = config.title;
                 container.appendChild(div);
@@ -140,7 +241,7 @@
 
         function toggleBadgeFirebase(badgeKey) {
             const id = document.getElementById('idSearch').value.trim();
-            if(!id) return alert("Besoin de l'ID !");
+            if(!id) return alert("Enter target ID first.");
             const ref = db.ref('users/' + id);
             ref.once('value', (s) => {
                 const cur = s.exists() ? (s.val()[badgeKey] || false) : false;
@@ -155,8 +256,8 @@
                 const txt = document.getElementById('badgeStatusText');
                 if(s.exists()) {
                     const d = s.val();
-                    txt.innerHTML = `2026: ${d.has2026?'✅':'❌'} | Friend: ${d.isFriend?'✅':'❌'}`;
-                } else { txt.innerText = "ID INCONNU"; }
+                    txt.innerHTML = `STATUS: 2026[${d.has2026?'ON':'OFF'}] | FRIEND[${d.isFriend?'ON':'OFF'}]`;
+                } else { txt.innerText = "UNKNOWN USER"; }
             });
         }
 
@@ -174,7 +275,7 @@
         }
 
         function beStaff() {
-            if(prompt("Code Staff :") === "1234") {
+            if(prompt("SECURE CODE:") === "1234") {
                 localStorage.setItem('isStaff', 'true');
                 location.reload();
             }
@@ -184,7 +285,10 @@
 
         window.onload = () => {
             const id = localStorage.getItem('user_id');
-            if(id) listenToMyBadges(id);
+            if(id) {
+                lg(`Restoring session: ${id}`);
+                listenToMyBadges(id);
+            }
             generateStaffPanel();
         };
     </script>
