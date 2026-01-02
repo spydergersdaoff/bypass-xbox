@@ -11,5 +11,11 @@ const badgesConfig = {
         "action": () => {
             document.getElementById('adminPanel').style.display = 'flex';
         }
+    },
+    // TON NOUVEAU BADGE FRIEND
+    "isFriend": {
+        "img": "Friend.jpg",
+        "title": "Ami Officiel",
+        "isStaffOnly": false
     }
 };
