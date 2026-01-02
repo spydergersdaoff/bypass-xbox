@@ -11,7 +11,6 @@
         :root { --neon: #00ff9d; }
         body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; margin: 0; overflow-x: hidden; }
         
-        /* Grille de fond animée */
         .bg-grid { 
             position: fixed; inset: 0; 
             background-image: linear-gradient(to right, rgba(0,255,157,0.02) 1px, transparent 1px), 
@@ -50,11 +49,19 @@
             backdrop-filter: blur(20px); 
         }
 
+        /* Style des boutons Staff façon Toggle */
         .staff-btn { 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 20px; padding: 15px; cursor: pointer; text-align: center; 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 20px; padding: 15px; cursor: pointer; 
+            text-align: center; transition: 0.3s;
         }
-        .staff-btn:hover { background: rgba(0, 255, 157, 0.1); border-color: #00ff9d; }
+        .staff-btn.active { 
+            border-color: #00ff9d; 
+            background: rgba(0, 255, 157, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+        }
+        .staff-btn.active p { color: #00ff9d; }
 
         .terminal-scroll::-webkit-scrollbar { width: 4px; }
         .terminal-scroll::-webkit-scrollbar-thumb { background: #00ff9d; border-radius: 10px; }
@@ -68,9 +75,10 @@
             <h3 class="text-[#00ff9d] font-black mb-4 uppercase italic tracking-widest text-xl">Console Staff</h3>
             <input type="text" id="idSearch" oninput="checkUserStatus()" placeholder="ID CIBLE (BP-XXXX)" class="w-full bg-black border border-white/10 p-4 rounded-xl text-[#00ff9d] mb-4 text-center outline-none focus:border-[#00ff9d]">
             
-            <div id="staffButtonsContainer" class="grid grid-cols-2 gap-3 mb-6"></div>
+            <div id="staffButtonsContainer" class="grid grid-cols-2 gap-3 mb-6">
+                </div>
             
-            <p id="badgeStatusText" class="text-[10px] text-gray-500 uppercase mb-6 font-bold">Vérification database...</p>
+            <p id="badgeStatusText" class="text-[10px] text-gray-500 uppercase mb-6 font-bold tracking-tighter">Entrez un ID pour modifier</p>
             <button onclick="document.getElementById('adminPanel').style.display='none'" class="text-red-500 text-[10px] font-black uppercase tracking-widest hover:text-red-400">Fermer la session</button>
         </div>
     </div>
@@ -123,7 +131,6 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        // --- ID SANS REFRESH ---
         function generateUserCode() {
             let id = localStorage.getItem('user_id');
             if(!id) {
@@ -134,7 +141,6 @@
             listenToMyBadges(id);
         }
 
-        // --- INJECTION ---
         async function runBypass() {
             const urlIn = document.getElementById('oauthUrl').value.trim();
             if(!urlIn) return lg("ERREUR : URL MANQUANTE", "text-red-500");
@@ -158,16 +164,19 @@
             } catch (e) { lg("ERREUR RESEAU"); }
         }
 
-        // --- BADGES & STAFF ---
-        function generateStaffPanel() {
+        // --- GESTION STAFF AVEC COULEURS DYNAMIQUES ---
+        function generateStaffPanel(userData = {}) {
             const container = document.getElementById('staffButtonsContainer');
             container.innerHTML = "";
             for (const [key, config] of Object.entries(badgesConfig)) {
                 if(key === "isStaff") continue;
+                
+                const isActive = userData && userData[key]; // Vérifie si le badge est True en DB
+                
                 const div = document.createElement('div');
-                div.className = "staff-btn";
+                div.className = `staff-btn ${isActive ? 'active' : ''}`;
                 div.onclick = () => toggleBadgeFirebase(key);
-                div.innerHTML = `<p class="text-[10px] font-black">${config.title}</p>`;
+                div.innerHTML = `<p class="text-[11px] font-black uppercase tracking-tighter">${config.title}</p>`;
                 container.appendChild(div);
             }
         }
@@ -184,13 +193,20 @@
 
         function checkUserStatus() {
             const id = document.getElementById('idSearch').value.trim();
-            if(!id) return;
+            if(!id) {
+                generateStaffPanel({}); 
+                return;
+            }
             db.ref('users/' + id).on('value', (s) => {
                 const txt = document.getElementById('badgeStatusText');
                 if(s.exists()) {
                     const d = s.val();
                     txt.innerHTML = `2026: ${d.has2026?'✅':'❌'} | Friend: ${d.isFriend?'✅':'❌'}`;
-                } else { txt.innerText = "USER NON TROUVÉ"; }
+                    generateStaffPanel(d); // On passe les données pour allumer les boutons
+                } else { 
+                    txt.innerText = "USER NON TROUVÉ";
+                    generateStaffPanel({}); 
+                }
             });
         }
 
@@ -216,7 +232,7 @@
         window.onload = () => {
             const id = localStorage.getItem('user_id');
             if(id) listenToMyBadges(id);
-            generateStaffPanel();
+            generateStaffPanel({});
         };
     </script>
 </body>
