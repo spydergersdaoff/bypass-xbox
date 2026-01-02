@@ -2,69 +2,77 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bypass Pro | Système Automatique</title>
+    <title>Bypass Pro | Classic UI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="badges.js"></script>
     <style>
-        :root { --neon: #00ff9d; }
-        body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; margin: 0; }
-        .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(to right, rgba(0,255,157,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,255,157,0.02) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
-        .glass-card { background: rgba(10, 10, 15, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 40px; backdrop-filter: blur(10px); }
-        .btn-premium { background: linear-gradient(to right, #00ff9d, #0078d4); color: black; font-weight: 900; border-radius: 20px; transition: 0.3s; cursor: pointer; }
-        .badge-wrapper { background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; margin-top: 12px; min-height: 52px; }
-        .badge-img { width: 32px; height: 32px; object-fit: contain; cursor: pointer; transition: 0.2s; }
-        .badge-img:hover { transform: scale(1.2); }
-        #adminPanel { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
-        .staff-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
-        .staff-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; cursor: pointer; text-align: center; transition: 0.2s; }
-        .staff-btn:hover { background: rgba(0, 255, 157, 0.1); border-color: #00ff9d; }
+        body { background: #1a1a1a; color: #ffffff; font-family: 'Segoe UI', sans-serif; }
+        .card { background: #252525; border: 1px solid #333; border-radius: 10px; padding: 25px; }
+        .terminal { background: #000; border: 1px solid #444; color: #00ff00; font-family: monospace; padding: 15px; height: 350px; overflow-y: auto; font-size: 13px; }
+        .btn-blue { background: #0078d4; color: white; padding: 12px; border-radius: 5px; cursor: pointer; text-align: center; font-weight: bold; }
+        .btn-blue:hover { background: #005a9e; }
+        .input-box { background: #111; border: 1px solid #444; color: #00ff9d; padding: 12px; border-radius: 5px; width: 100%; outline: none; }
+        .badge-img { width: 32px; height: 32px; margin-left: 10px; cursor: pointer; display: inline-block; }
+        #adminPanel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 9999; }
+        .staff-btn { background: #333; padding: 10px; border: 1px solid #555; border-radius: 5px; cursor: pointer; text-align: center; font-size: 12px; }
     </style>
 </head>
-<body class="flex flex-col items-center">
-    <div class="bg-grid"></div>
+<body class="p-6">
 
     <div id="adminPanel">
-        <div class="glass-card p-10 w-[450px] border-[#00ff9d]/30 text-center">
-            <h3 class="text-[#00ff9d] font-black mb-4 uppercase">Console Maître</h3>
-            <input type="text" id="idSearch" oninput="checkUserStatus()" placeholder="ID UTILISATEUR (BP-XXXX)" class="w-full bg-black border border-white/10 p-4 rounded-xl text-[#00ff9d] mb-4 text-center outline-none">
+        <div class="card w-96 text-center">
+            <h2 class="text-xl font-bold mb-4 text-blue-400">STAFF CONSOLE</h2>
+            <input type="text" id="idSearch" oninput="checkUserStatus()" placeholder="Coller l'ID ici..." class="input-box mb-4 text-center">
             
-            <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Cliquez pour donner/retirer un badge :</p>
+            <div id="staffButtonsContainer" class="grid grid-cols-2 gap-2 mb-4"></div>
             
-            <div id="staffButtonsContainer" class="staff-grid mb-6"></div>
-
-            <button onclick="document.getElementById('adminPanel').style.display='none'" class="text-red-500 text-[10px] font-black uppercase tracking-widest">Fermer la session</button>
+            <p id="badgeStatusText" class="text-[10px] text-gray-500 mb-6 font-bold uppercase italic">En attente d'ID...</p>
+            <button class="w-full p-2 bg-red-600 rounded text-sm font-bold" onclick="document.getElementById('adminPanel').style.display='none'">FERMER</button>
         </div>
     </div>
 
-    <div class="w-full max-w-6xl p-6 grid grid-cols-1 md:grid-cols-2 gap-10 mt-12">
-        <div class="glass-card p-12">
-            <div class="flex justify-between items-start mb-10">
-                <h1 ondblclick="beStaff()" class="text-3xl font-black italic uppercase">Bypass <span class="text-[#00ff9d]">Pro</span></h1>
-                <div class="flex flex-col items-end">
-                    <button onclick="generateUserCode()" class="text-[10px] text-[#00ff9d] border border-[#004d33] px-5 py-2 rounded-full font-black">ID SYSTEM</button>
-                    <div id="badgeGroupContainer" class="hidden badge-wrapper"></div>
-                </div>
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-8 bg-[#252525] p-5 rounded-lg border border-[#333]">
+            <h1 class="text-2xl font-bold italic" ondblclick="beStaff()">BYPASS <span class="text-blue-500">PRO</span></h1>
+            <div class="flex items-center">
+                <div id="badgeGroupContainer"></div>
+                <button onclick="generateUserCode()" class="ml-6 text-[11px] border border-gray-500 px-4 py-2 rounded hover:bg-gray-800 transition uppercase font-bold">Générer ID System</button>
             </div>
-
-            <div class="space-y-6">
-                <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="block p-5 bg-white/5 border border-white/10 rounded-2xl text-center text-[11px] font-black uppercase hover:bg-[#00ff9d] hover:text-black transition-all">1. Activer Proxy</a>
-                <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="flex justify-center p-5 bg-black border border-white/10 rounded-2xl text-[11px] font-black uppercase">2. Login Microsoft</a>
-                <input type="text" id="oauthUrl" placeholder="Lien redirection..." class="w-full bg-black/50 border border-white/10 p-5 rounded-2xl text-xs outline-none focus:border-[#00ff9d] text-[#00ff9d]">
-            </div>
-            <button onclick="runBypass()" class="btn-premium w-full py-6 mt-12 uppercase font-black tracking-[5px]">Lancer l'Injection</button>
         </div>
 
-        <div class="glass-card p-8 bg-black/40 h-[500px] flex flex-col">
-            <div class="text-[10px] font-bold text-gray-500 mb-4">TERMINAL</div>
-            <div id="console" class="text-[#00ff9d] text-[11px] font-mono overflow-y-auto space-y-2"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="card space-y-6">
+                <div>
+                    <label class="block text-[10px] text-gray-500 font-bold mb-2 uppercase">1. Proxy Setup</label>
+                    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" class="btn-blue block text-sm">Réveiller le Proxy</a>
+                </div>
+                
+                <div>
+                    <label class="block text-[10px] text-gray-500 font-bold mb-2 uppercase">2. Microsoft Auth</label>
+                    <a href="https://login.live.com/oauth20_authorize.srf?client_id=82023151-c27d-4fb5-8551-10c10724a55e&redirect_uri=https%3A%2F%2Faccounts.epicgames.com%2FOAuthAuthorized&scope=xboxlive.signin&response_type=code" target="_blank" class="btn-blue block text-sm bg-gray-600">Se connecter</a>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-500 font-bold mb-2 uppercase">3. Redirect URL</label>
+                    <input type="text" id="oauthUrl" placeholder="Collez l'URL ici..." class="input-box">
+                </div>
+
+                <button onclick="runBypass()" class="btn-blue bg-green-600 w-full py-4 text-lg mt-4">LANCER L'INJECTION</button>
+            </div>
+
+            <div class="flex flex-col">
+                <label class="text-[10px] text-gray-500 font-bold mb-2 ml-1 uppercase">Terminal de sortie</label>
+                <div id="console" class="terminal">
+                    <div>> System Online. Prêt.</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIG FIREBASE (Reste identique)
+        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCffOShkgzi4Y5HSGOlAuroq3-xecTfVug",
             authDomain: "bypasspro-9ba19.firebaseapp.com",
@@ -76,58 +84,28 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // --- GÉNÉRATION AUTOMATIQUE DU PANEL STAFF ---
-        function generateStaffPanel() {
-            const container = document.getElementById('staffButtonsContainer');
-            container.innerHTML = ""; // On vide
-            
-            for (const [key, config] of Object.entries(badgesConfig)) {
-                // On ne crée pas de bouton pour le badge Staff lui-même (trop dangereux)
-                if(key === "isStaff") continue;
+        function lg(t) {
+            const c = document.getElementById('console');
+            c.innerHTML += `<div>> ${t}</div>`;
+            c.scrollTop = c.scrollHeight;
+        }
 
-                const btn = document.createElement('div');
-                btn.className = "staff-btn";
-                btn.onclick = () => toggleBadgeFirebase(key);
-                btn.innerHTML = `
-                    <img src="${config.img}" class="w-8 mx-auto mb-2 rounded-full">
-                    <p class="text-[9px] font-black uppercase">${config.title}</p>
-                `;
-                container.appendChild(btn);
+        // ID SANS REFRESH
+        function generateUserCode() {
+            let id = localStorage.getItem('user_id');
+            if(!id) {
+                id = "BP-" + Math.floor(1000 + Math.random() * 9000);
+                localStorage.setItem('user_id', id);
             }
+            lg("VOTRE ID : " + id);
+            listenToMyBadges(id);
         }
 
-        // --- FONCTION TOGGLE DYNAMIQUE ---
-        function toggleBadgeFirebase(badgeKey) {
-            const id = document.getElementById('idSearch').value.trim();
-            if(!id) return alert("Veuillez entrer un ID !");
-            const ref = db.ref('users/' + id);
-            ref.once('value', (s) => {
-                const current = s.exists() ? (s.val()[badgeKey] || false) : false;
-                ref.update({ [badgeKey]: !current });
-            });
-        }
-
-        // --- RENDER DES BADGES SUR LE PROFIL ---
-        function renderBadges(userData) {
-            const container = document.getElementById('badgeGroupContainer');
-            container.innerHTML = ""; 
-            let hasAny = false;
-            for (const [key, config] of Object.entries(badgesConfig)) {
-                if ((userData && userData[key]) || (key === 'isStaff' && localStorage.getItem('isStaff'))) {
-                    hasAny = true;
-                    const img = document.createElement('img');
-                    img.src = config.img; img.title = config.title; img.className = "badge-img";
-                    if(config.action) img.onclick = config.action;
-                    container.appendChild(img);
-                }
-            }
-            container.classList.toggle('hidden', !hasAny);
-        }
-
-        // --- LOGIQUE BYPASS PYTHON (SWITCH) ---
+        // MOTEUR BYPASS
         async function runBypass() {
             const urlIn = document.getElementById('oauthUrl').value.trim();
-            if(!urlIn) return;
+            if(!urlIn) return lg("Erreur: Lien manquant.");
+            lg("Injection lancée...");
             const proxy = "https://cors-anywhere.herokuapp.com/";
             const SWITCH_TOKEN = "Basic OThmN2U0MmMyZTNhNGY4NmE3NGViNDNmYmI0MWVkMzk6MGEyNDQ5YTItMDAxYS00NTFlLWFmZWMtM2U4MTI5MDFjNGQ3";
             try {
@@ -140,19 +118,74 @@
                 if(d1.access_token) {
                     const r2 = await fetch(proxy + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/exchange', { headers: { 'Authorization': "Bearer " + d1.access_token } });
                     const d2 = await r2.json();
-                    document.getElementById('console').innerHTML += `<div>> SUCCÈS : <a href="https://www.epicgames.com/id/exchange?exchangeCode=${d2.code}" target="_blank" style="color:#00ff9d underline">CLIQUE ICI</a></div>`;
-                }
-            } catch (e) { console.error(e); }
+                    lg("Succès ! Exchange: " + d2.code);
+                    lg("<a href='https://www.epicgames.com/id/exchange?exchangeCode="+d2.code+"' target='_blank' style='color:#00ff9d;text-decoration:underline;'>CLIQUE ICI</a>");
+                } else { lg("Erreur d'authentification."); }
+            } catch (e) { lg("Erreur Proxy ou URL."); }
         }
 
-        function beStaff() { if(prompt("Code :") === "1234") { localStorage.setItem('isStaff', 'true'); location.reload(); } }
+        // GESTION STAFF DYNAMIQUE
+        function generateStaffPanel() {
+            const container = document.getElementById('staffButtonsContainer');
+            container.innerHTML = "";
+            for (const [key, config] of Object.entries(badgesConfig)) {
+                if(key === "isStaff") continue;
+                const div = document.createElement('div');
+                div.className = "staff-btn";
+                div.onclick = () => toggleBadgeFirebase(key);
+                div.innerText = config.title;
+                container.appendChild(div);
+            }
+        }
+
+        function toggleBadgeFirebase(badgeKey) {
+            const id = document.getElementById('idSearch').value.trim();
+            if(!id) return alert("Besoin de l'ID !");
+            const ref = db.ref('users/' + id);
+            ref.once('value', (s) => {
+                const cur = s.exists() ? (s.val()[badgeKey] || false) : false;
+                ref.update({ [badgeKey]: !cur });
+            });
+        }
+
+        function checkUserStatus() {
+            const id = document.getElementById('idSearch').value.trim();
+            if(!id) return;
+            db.ref('users/' + id).on('value', (s) => {
+                const txt = document.getElementById('badgeStatusText');
+                if(s.exists()) {
+                    const d = s.val();
+                    txt.innerHTML = `2026: ${d.has2026?'✅':'❌'} | Friend: ${d.isFriend?'✅':'❌'}`;
+                } else { txt.innerText = "ID INCONNU"; }
+            });
+        }
+
+        function renderBadges(userData) {
+            const container = document.getElementById('badgeGroupContainer');
+            container.innerHTML = ""; 
+            for (const [key, config] of Object.entries(badgesConfig)) {
+                if ((userData && userData[key]) || (key === 'isStaff' && localStorage.getItem('isStaff'))) {
+                    const img = document.createElement('img');
+                    img.src = config.img; img.title = config.title; img.className = "badge-img";
+                    if(config.action) img.onclick = config.action;
+                    container.appendChild(img);
+                }
+            }
+        }
+
+        function beStaff() {
+            if(prompt("Code Staff :") === "1234") {
+                localStorage.setItem('isStaff', 'true');
+                location.reload();
+            }
+        }
+
         function listenToMyBadges(id) { db.ref('users/' + id).on('value', (s) => renderBadges(s.exists() ? s.val() : {})); }
-        function generateUserCode() { let id = "BP-"+Math.floor(1000+Math.random()*9000); localStorage.setItem('user_id', id); location.reload(); }
 
         window.onload = () => {
             const id = localStorage.getItem('user_id');
             if(id) listenToMyBadges(id);
-            generateStaffPanel(); // On génère le panel au chargement
+            generateStaffPanel();
         };
     </script>
 </body>
