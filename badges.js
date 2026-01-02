@@ -14,5 +14,10 @@ const badgesConfig = {
         "img": "Friend.png",
         "title": "Ami Officiel",
         "isStaffOnly": false
+    },
+    "Donate": {
+        "img": "Donateur.png",
+        "title": "Donateur PayPal",
+        "isStaffOnly": false
     }
 };
