@@ -11,7 +11,7 @@ const badgesConfig = {
         "action": () => { document.getElementById('adminPanel').style.display = 'flex'; }
     },
     "isFriend": {
-        "img": "Friend.jpg",
+        "img": "Friend.png",
         "title": "Ami Officiel",
         "isStaffOnly": false
     }
