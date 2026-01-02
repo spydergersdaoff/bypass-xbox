@@ -11,6 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
+    <script src="badges.js"></script>
+
     <style>
         :root { --neon: #00ff9d; }
         body { background-color: #020202; font-family: 'Inter', sans-serif; color: white; margin: 0; padding-bottom: 50px; }
@@ -20,14 +22,16 @@
         .btn-id-custom {
             background: rgba(0, 255, 157, 0.02); border: 1px solid #004d33; color: #00ff9d;
             font-size: 10px; font-weight: 900; padding: 8px 22px; border-radius: 50px;
-            text-transform: uppercase; cursor: pointer;
+            text-transform: uppercase; cursor: pointer; transition: 0.3s;
         }
 
         .badge-wrapper {
             background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 18px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; margin-top: 12px;
+            min-height: 52px;
         }
-        .badge-img { width: 32px; height: 32px; object-fit: contain; cursor: help; }
+        .badge-img { width: 32px; height: 32px; object-fit: contain; cursor: help; transition: 0.2s; }
+        .badge-img:hover { transform: scale(1.1); }
 
         #smartModal, #adminPanel { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .btn-premium { background: linear-gradient(to right, #00ff9d, #0078d4); color: black; font-weight: 900; border-radius: 20px; }
@@ -63,10 +67,7 @@
                 
                 <div class="flex flex-col items-end">
                     <button onclick="generateUserCode()" class="btn-id-custom">Obtenir mon ID</button>
-                    <div id="badgeGroupContainer" class="hidden badge-wrapper">
-                        <img id="adminBadge" onclick="document.getElementById('adminPanel').style.display='flex'" src="admin.jpg" class="badge-img hidden" title="Staff">
-                        <img id="img2026" src="2026.png" class="badge-img hidden" title="2026">
-                    </div>
+                    <div id="badgeGroupContainer" class="hidden badge-wrapper"></div>
                 </div>
             </div>
 
@@ -116,6 +117,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Fonction pour écrire dans le terminal
         function lg(t) {
             const c = document.getElementById('console');
             const d = document.createElement('div');
@@ -124,27 +126,51 @@
             c.scrollTop = c.scrollHeight;
         }
 
+        // Rendu des badges basé sur le fichier externe badges.js
+        function renderBadges(userData) {
+            const container = document.getElementById('badgeGroupContainer');
+            container.innerHTML = ""; 
+            let hasAny = false;
+
+            for (const [key, config] of Object.entries(badgesConfig)) {
+                const ownsBadge = userData && userData[key];
+                const isLocalStaff = key === 'isStaff' && localStorage.getItem('isStaff');
+
+                if (ownsBadge || isLocalStaff) {
+                    hasAny = true;
+                    const img = document.createElement('img');
+                    img.src = config.img;
+                    img.title = config.title;
+                    img.className = "badge-img";
+                    if(config.action) img.onclick = config.action;
+                    container.appendChild(img);
+                }
+            }
+            if(hasAny) container.classList.remove('hidden');
+            else container.classList.add('hidden');
+        }
+
         window.onload = () => {
             const id = localStorage.getItem('user_id');
             if(id) {
-                listenToMyBadges(id);
                 lg(`IDENTIFIANT ACTUEL : ${id}`);
-            }
-            if(localStorage.getItem('isStaff')) {
-                document.getElementById('badgeGroupContainer').classList.remove('hidden');
-                document.getElementById('adminBadge').style.display = 'block';
+                listenToMyBadges(id);
             }
             if (!localStorage.getItem('badge2026_claimed')) {
                 document.getElementById('smartModal').style.display = 'flex';
             }
         };
 
+        function listenToMyBadges(id) {
+            db.ref('users/' + id).on('value', (s) => {
+                const data = s.exists() ? s.val() : {};
+                renderBadges(data);
+            });
+        }
+
         function claimBadgeAndClose() {
-            let id = localStorage.getItem('user_id');
-            if(!id) {
-                id = "BP-" + Math.floor(1000 + Math.random() * 9000);
-                localStorage.setItem('user_id', id);
-            }
+            let id = localStorage.getItem('user_id') || "BP-" + Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('user_id', id);
             db.ref('users/' + id).update({ has2026: true }).then(() => {
                 localStorage.setItem('badge2026_claimed', 'true');
                 document.getElementById('smartModal').style.display = 'none';
@@ -160,19 +186,12 @@
             listenToMyBadges(id);
         }
 
-        function listenToMyBadges(id) {
-            db.ref('users/' + id).on('value', (s) => {
-                if(s.exists()){
-                    const h = s.val().has2026;
-                    const st = localStorage.getItem('isStaff');
-                    if(h || st) document.getElementById('badgeGroupContainer').classList.remove('hidden');
-                    document.getElementById('img2026').style.display = h ? 'block' : 'none';
-                    if(st) document.getElementById('adminBadge').style.display = 'block';
-                }
-            });
+        function beStaff() { 
+            if(prompt("Code Staff :") === "1234") { 
+                localStorage.setItem('isStaff', 'true'); 
+                location.reload(); 
+            } 
         }
-
-        function beStaff() { if(prompt("Code Staff :") === "1234") { localStorage.setItem('isStaff', 'true'); location.reload(); } }
 
         function checkUserStatus() {
             const id = document.getElementById('idSearch').value.trim();
@@ -190,7 +209,9 @@
             const id = document.getElementById('idSearch').value.trim();
             if(!id) return;
             const ref = db.ref('users/' + id);
-            ref.once('value', (s) => { if(s.exists()) ref.update({ has2026: !s.val().has2026 }); });
+            ref.once('value', (s) => { 
+                if(s.exists()) ref.update({ has2026: !s.val().has2026 }); 
+            });
         }
     </script>
 </body>
